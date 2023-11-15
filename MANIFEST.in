@@ -1,0 +1,7 @@
+include LICENSE
+include tox.ini
+include requirements.txt
+recursive-include src *.deploy_cfg
+recursive-include src *.ini
+recursive-include src *.json
+recursive-include src *.py

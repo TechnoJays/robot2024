@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "team94_robot-2023"
+authors = [
+    { name = "Retrojays", email = "team94frc@gmail.com" },
+    { name = "Derelle Redmond"}
+]
+description = "Team 94: 2023 Retrojays Robot Code"
+readme = "README.md"
+requires-python = ">=3.11"
+keywords = ["team94", "robotpy", "FIRST", "FRC"]
+classifiers = [
+    "Environment :: roboRIO",
+    "Intended Audience :: Student Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+]
+dependencies = [
+    "robotpy",
+    "robotpy[commands2]",
+    "robotpy[cscore]",
+    "robotpy-wpimath",
+    "robotpy-wpiutil",
+    "pyfrc",
+    "wpilib",
+    "numpy",
+]
+dynamic = ["version"]
