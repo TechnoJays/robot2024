@@ -85,7 +85,7 @@ def test_get_position():
     assert False
 
 
-@pytest.mark.skip(reason="no important game message (panel color) for 2023 game")
+@pytest.mark.skip(reason="no important game message (panel color) for 2024 game")
 def test_get_game_message():
     assert False
 

@@ -3,12 +3,12 @@ requires = ["setuptools", "setuptools-scm"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "team94_robot-2023"
+name = "team94_robot-2024"
 authors = [
     { name = "Retrojays", email = "team94frc@gmail.com" },
     { name = "Derelle Redmond"}
 ]
-description = "Team 94: 2023 Retrojays Robot Code"
+description = "Team 94: 2024 Retrojays Robot Code"
 readme = "README.md"
 requires-python = ">=3.11"
 keywords = ["team94", "robotpy", "FIRST", "FRC"]

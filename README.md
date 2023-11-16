@@ -1,7 +1,7 @@
-# Team 94 FIRST Robotics 2023 FRC Robot Code
+# Team 94 FIRST Robotics 2024 FRC Robot Code
 
 [FIRST Robotics FRC] is a high school robotics program. This repository contains the code used in the
-Southfield High School Team 94 (Retrojays) robot for the year 2023.
+Southfield High School Team 94 (Retrojays) robot for the year 2024.
 
 ## Getting Started
 
