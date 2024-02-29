@@ -22,7 +22,7 @@ by pyfrc changes year over year.
           (if you have the misfortune to be using Windows and possibly follow [this page] for more instructions on
           supporting different python versions
 * [pipenv] is useful for dependency management for this project as well
-    * `pipenv --python 3.11` to create a python 3.11 environment for this project
+    * `` to create a python 3.11 environment for this project
     * `pipenv install -r requirements.txt` to setup this project in the created virtualenv
     * `pipenv shell` to enter the environment for this project
     * `pip install tox` to install tox in the environment
@@ -37,15 +37,10 @@ It is very important that you have updated pip to the latest version. You can do
 pip install -U pip setuptools
 ```
 
-Note: If you are confident that your system version of python is exactly python 3.8, then you can simply use:
-
-```bash
-pip install -r requirements.txt
-pip install tox
-tox
-```
 
 Good luck!
+
+## 
 
 ## Deploying to the Robot
 
