@@ -42,6 +42,9 @@ class Drivetrain(Subsystem):
         self._init_components()
         self._gyro: Optional[ADXRS450_Gyro] = None
         self._gyro_angle: float = 0.0
+        self._slow: bool = False
+        self._turbo: bool = False
+        # TODO: refactor smartdashboard updates into robot controller
         Drivetrain._update_smartdashboard_tank_drive(0.0, 0.0)
         Drivetrain._update_smartdashboard_arcade_drive(0.0, 0.0)
         super().__init__()
@@ -182,3 +185,27 @@ class Drivetrain(Subsystem):
     @property
     def right_slew_rate(self):
         return self._r_slew_rate_limiter
+
+    def turbo(self) -> bool:
+        return self._turbo
+
+    def set_turbo(self) -> bool:
+        self._slow = False
+        self._turbo = True
+        return self._turbo
+
+    def release_turbo(self) -> bool:
+        self._turbo = False
+        return self._turbo
+
+    def slow(self) -> bool:
+        return self._slow
+
+    def set_slow(self) -> bool:
+        self._slow = True
+        self._turbo = False
+        return self._slow
+
+    def release_slow(self) -> bool:
+        self._slow = False
+        return self._slow

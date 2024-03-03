@@ -6,16 +6,13 @@ import logging
 from configparser import ConfigParser
 
 import wpilib
-from commands.winch_commands import MoveWinch
-
-from commands.shooter_commands import Shoot
 from commands2 import TimedCommandRobot, Subsystem, SequentialCommandGroup
 from wpilib import SmartDashboard, SendableChooser
 
-from commands.arm_commands import ArmMove
 from commands.autonomous_drive_commands import MoveFromLine
-from commands.grabber_commands import Grab, Release, DoNothingGrabber
-from commands.tank_drive_commands import TankDrive
+from commands.shooter_commands import Shoot
+from commands.tank_drive_commands import TankDrive, GoTurbo, ReleaseTurbo
+from commands.winch_commands import MoveWinch
 from oi import OI
 from subsystems.climbing import Climbing
 from subsystems.drivetrain import Drivetrain
@@ -114,9 +111,8 @@ class RobotController:
                 lambda: self.oi.scoring_controller.getLeftY(),
             )
         )
-
-        # set up the default grabber command to be "Grab"
-        self.climber.setDefaultCommand(MoveWinch(self.climber(), self.oi))
+        self.oi.driver_controller.rightBumper().onTrue(GoTurbo(self.drivetrain))
+        self.oi.driver_controller.rightBumper().onFalse(ReleaseTurbo(self.drivetrain))
 
         # set up the right bumper of the scoring controller to trigger the grabber to release
         self.oi.scoring_controller.rightBumper().onTrue(Suck(self.vacuum))

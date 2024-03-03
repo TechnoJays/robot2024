@@ -4,7 +4,8 @@
 import typing
 
 from commands2 import Command, Subsystem
-from oi import JoystickAxis, UserController, OI
+
+from oi import OI
 from subsystems.drivetrain import Drivetrain
 
 
@@ -38,35 +39,27 @@ class TankDrive(Command):
 
     def initialize(self):
         """Called before the Command is run for the first time."""
-        return Command.initialize(self)
+        pass
 
     def execute(self):
         """Called repeatedly when this Command is scheduled to run"""
-        slow: bool = self.oi.driver_controller.leftBumper()
-        turbo: bool = self.oi.driver_controller.rightBumper()
-        dpad_y: float = self.oi.get_axis(
-            UserController.DRIVER, JoystickAxis.DPADY
-        )
 
         modifier = self._drivetrain.default_scaling
 
-        if slow:
+        if self.drivetrain.slow():
             modifier = self._drivetrain.modifier_scaling
-        elif turbo:
+        elif self.drivetrain.turbo():
             modifier = 1.0
 
-        if dpad_y != 0.0:
-            self.drivetrain.arcade_drive(self._dpad_scaling * dpad_y, 0.0)
-        else:
-            left_track: float = self.oi.driver_controller.getLeftY()
-            right_track: float = self.oi.driver_controller.getRightY()
-            self.drivetrain.tank_drive(left_track * modifier, right_track * modifier)
+        left_track: float = self.oi.driver_controller.getLeftY()
+        right_track: float = self.oi.driver_controller.getRightY()
+        self.drivetrain.tank_drive(left_track * modifier, right_track * modifier)
 
     def isFinished(self) -> bool:
         """
         If TankDrive is a registered command for the robot, it should be utilized
         as the default command for the drivetrain. As the default command for the drivetrain
-        it is never finished
+        it is never finished, so we return False
         """
         return False
 
@@ -94,3 +87,62 @@ class TankDrive(Command):
     @property
     def oi(self) -> OI:
         return self._oi
+
+
+class GoTurbo(Command):
+
+    def __init__(self, drivetrain: Drivetrain):
+        super().__init__()
+        self._drivetrain = drivetrain
+        self._turbo_updated = False
+
+    def initialize(self) -> None:
+        pass
+
+    def execute(self) -> None:
+        self._turbo_updated = self._drivetrain.set_turbo()
+
+    def isFinished(self) -> bool:
+        return self._turbo_updated
+
+    def end(self, interrupted: bool) -> None:
+        """
+        This command is meant to be behind a button press (on press), and so should not be interruptable
+        """
+        pass
+
+    def getRequirements(self) -> typing.Set[Subsystem]:
+        return {self._drivetrain}
+
+    def turboUpdated(self) -> bool:
+        return self._turbo_updated
+
+
+class ReleaseTurbo(Command):
+
+    def __init__(self, drivetrain: Drivetrain):
+        super().__init__()
+        self._drivetrain = drivetrain
+        self._turbo_updated = False
+
+    def initialize(self) -> None:
+        pass
+
+    def execute(self) -> None:
+        """
+        Expect release turbo to return the drivetrains turbo value, which should be false
+        after being released
+        """
+        self._turbo_updated = not self._drivetrain.release_turbo()
+
+    def isFinished(self) -> bool:
+        return self._turbo_updated
+
+    def end(self, interrupted: bool) -> None:
+        pass
+
+    def getRequirements(self) -> typing.Set[Subsystem]:
+        return {self._drivetrain}
+
+    def turboUpdated(self) -> bool:
+        return self._turbo_updated
