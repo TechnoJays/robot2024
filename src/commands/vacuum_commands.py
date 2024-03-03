@@ -5,7 +5,7 @@ from wpilib import IterativeRobotBase
 from oi import UserController, JoystickAxis
 
 
-class Vacuum(Command):
+class Vac(Command):
 
     def __init__(
             self,

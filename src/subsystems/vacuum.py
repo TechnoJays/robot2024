@@ -1,11 +1,11 @@
 from configparser import ConfigParser
 
-from commands2 import SubsystemBase
+from commands2 import Subsystem
 from wpilib import PWMVictorSPX
 from wpilib import SmartDashboard
 
 
-class Vacuum(SubsystemBase):
+class Vacuum(Subsystem):
     # Config file section names
     GENERAL_SECTION = "VacuumGeneral"
 

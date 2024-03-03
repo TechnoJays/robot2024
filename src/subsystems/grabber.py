@@ -3,11 +3,11 @@
 # the MIT license file in the root directory of this project
 from configparser import ConfigParser
 
-from commands2 import SubsystemBase
+from commands2 import SubsystemBase, Subsystem
 from wpilib import PneumaticsModuleType, Solenoid, SmartDashboard
 
 
-class Grabber(SubsystemBase):
+class Grabber(Subsystem):
     # Config file section name
     GENERAL_SECTION = "GrabberGeneral"
 

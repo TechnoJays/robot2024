@@ -4,7 +4,7 @@
 from configparser import ConfigParser
 from typing import Optional
 
-from commands2 import SubsystemBase
+from commands2 import Subsystem
 from wpilib import ADXRS450_Gyro
 from wpilib import PWMMotorController, PWMVictorSPX
 from wpilib import SmartDashboard
@@ -12,7 +12,7 @@ from wpilib.drive import DifferentialDrive
 from wpimath.filter import SlewRateLimiter
 
 
-class Drivetrain(SubsystemBase):
+class Drivetrain(Subsystem):
     # Config file section names
     GENERAL_SECTION = "DrivetrainGeneral"
     LEFT_MOTOR_SECTION = "DrivetrainLeftMotor"

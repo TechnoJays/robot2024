@@ -1,14 +1,13 @@
 import configparser
 
-from commands2 import SubsystemBase
+from commands.winch_commands import MoveWinch
+from commands2 import Subsystem
 from wpilib import DigitalInput, IterativeRobotBase
 from wpilib import PWMTalonSRX
 from wpilib import SmartDashboard
 
-from commands.winch_commands import MoveWinch
 
-
-class Climbing(SubsystemBase):
+class Climbing(Subsystem):
     # Config file section names
     GENERAL_SECTION = "ClimbingGeneral"
     LIMIT_SWITCH_SECTION = "ClimbingLimitSwitch"
@@ -27,10 +26,10 @@ class Climbing(SubsystemBase):
     _limit_switch_inverted = False
 
     def __init__(
-        self,
-        robot: IterativeRobotBase,
-        name: str = "Winch",
-        configfile: str = "/home/lvuser/py/configs/subsystems.ini",
+            self,
+            robot: IterativeRobotBase,
+            name: str = "Climber",
+            configfile: str = "/home/lvuser/py/configs/subsystems.ini",
     ):
         self._robot = robot
         self._config = configparser.ConfigParser()
@@ -39,12 +38,12 @@ class Climbing(SubsystemBase):
         self._update_smartdashboard_sensors()
         self.setName(name)
         super().__init__()
-        
 
     def _init_components(self):
         self._max_speed = self._config.getfloat(
             Climbing.GENERAL_SECTION, Climbing.MAX_SPEED_KEY
         )
+
         if self._config.getboolean(Climbing.GENERAL_SECTION, Climbing.ENABLED_KEY):
             self._motor = PWMTalonSRX(
                 self._config.getint(Climbing.GENERAL_SECTION, Climbing.CHANNEL_KEY)
@@ -89,3 +88,6 @@ class Climbing(SubsystemBase):
                 adjusted_speed = 0.0
             self._motor.set(adjusted_speed)
         self._update_smartdashboard_sensors(adjusted_speed)
+
+    def potentiometer_raw(self) -> float:
+        return 0.0

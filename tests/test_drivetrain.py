@@ -117,13 +117,13 @@ def test_drivetrain_channels_0_1(drivetrain_channels_01: Drivetrain):
 
     # then: left motor is initialized and zero latched
     assert left_m.getInitialized() is True
-    assert left_m.getRawValue() == 0.0
+    assert left_m.getSpeed() == 0.0
     # Determine how to check this accurately. Check safety enabled? What is zero latch?
     assert left_m.getZeroLatch() is False
 
     # and: right motor is initialized and zero latched
     assert right_m.getInitialized() is True
-    assert right_m.getRawValue() == 0.0
+    assert right_m.getSpeed() == 0.0
     # Determine how to check this accurately. Check safety enabled? What is zero latch?
     assert right_m.getZeroLatch() is False
 

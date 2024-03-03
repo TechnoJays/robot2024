@@ -17,14 +17,10 @@ class RetrojaysRobot(TimedCommandRobot):
 
     def autonomousInit(self):
         # Schedule the autonomous command
-        # autonomous_command = MoveFromLine(
-        # self._robot_controller.drivetrain,
-        # self._robot_controller.autonomous_config
-        # )
         # TODO move into robot controller for better mgmt?
-        autonomous_command = self._robot_controller.get_auto_choice()
-        if autonomous_command:
-            autonomous_command.start()
+        autonomous_command_group = self._robot_controller.get_auto_choice()
+        if autonomous_command_group:
+            autonomous_command_group.schedule()
 
     def autonomousPeriodic(self):
         """
@@ -35,12 +31,15 @@ class RetrojaysRobot(TimedCommandRobot):
         pass
 
     def disabledInit(self):
+        logging.debug("Robot Code Disabled Initialized")
         pass
 
     def disabledPeriodic(self):
+        # print("Robot Code Disabled Periodic Loop")
         pass
 
     def disabledExit(self):
+        logging.debug("Robot Code Disabled Exit")
         pass
 
     def robotInit(self):
@@ -66,6 +65,7 @@ class RetrojaysRobot(TimedCommandRobot):
         CommandScheduler.getInstance().run()
 
     def teleopInit(self):
+        logging.debug("Robot Code Teleop Initialized")
         pass
 
     def teleopPeriodic(self):

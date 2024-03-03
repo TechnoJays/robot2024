@@ -1,11 +1,8 @@
 import configparser
 from enum import Enum
 
-from commands2 import CommandGroupBase
 from commands2.button import CommandXboxController
-from commands2.button import JoystickButton
 from wpilib import DriverStation
-from wpilib import Joystick
 from wpilib import SendableChooser
 
 
@@ -82,8 +79,9 @@ class OI:
             self._controllers.append(self._init_joystick(i))
             self._dead_zones.append(self._init_dead_zone(i))
 
-        self._driver_controller = self._controllers[0]
-        self._scoring_controller = self._controllers[1]
+        self._driver_controller = self._controllers[UserController.DRIVER.value]
+        self._scoring_controller = self._controllers[UserController.SCORING.value]
+
         self._auto_program_chooser: SendableChooser = SendableChooser()
         self._starting_chooser: SendableChooser = SendableChooser()
 
@@ -95,7 +93,7 @@ class OI:
         config_section = OI.JOY_CONFIG_SECTION + str(driver)
         return self._config.getfloat(config_section, OI.DEAD_ZONE_KEY)
 
-    def get_auto_choice(self) -> CommandGroupBase:
+    def get_auto_choice(self):
         """
         Return the autonomous mode choice selected on the smart dashboard
 
@@ -115,57 +113,14 @@ class OI:
     def get_game_message() -> str:
         return DriverStation.getGameSpecificMessage()
 
-    def get_axis(self, user: UserController, axis: int) -> float:
-        """Read axis value for specified controller/axis.
-
-        Args:
-            user: Controller ID to read from
-            axis: Axis ID to read from.
-
-        Return:
-            Current position for the specified axis. (Range [-1.0, 1.0])
-        """
-        controller = self._controllers[user.value]
-        value: float
-        if axis == JoystickAxis.DPADX:
-            value = controller.getPOV()
-            if value == 90:
-                value = 1.0
-            elif value == 270:
-                value = -1.0
-            else:
-                value = 0.0
-        elif axis == JoystickAxis.DPADY:
-            value = controller.getPOV()
-            if value == 0:
-                value = -1.0
-            elif value == 180:
-                value = 1.0
-            else:
-                value = 0.0
-        else:
-            value = controller.getRawAxis(axis)
-            if abs(value) < self._dead_zones[user.value]:
-                value = 0.0
-        return value
-
-    def get_button_state(self, user: UserController, button: int) -> bool:
-        return self._controllers[user.value].getRawButton(button)
-
     def config(self) -> configparser.ConfigParser:
         return self._config
 
-    def controllers(self) -> list[Joystick]:
+    def controllers(self) -> list[CommandXboxController]:
         return self._controllers
 
     def auto_chooser(self) -> SendableChooser:
         return self._auto_program_chooser
-
-    def grabbed(self) -> bool:
-        return self._scoring_controller.getRightBumper()
-
-    def released(self) -> JoystickButton:
-        return self._scoring_controller.getLeftBumper()
 
     @property
     def scoring_controller(self) -> CommandXboxController:

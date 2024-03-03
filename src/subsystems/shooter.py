@@ -1,13 +1,12 @@
 import configparser
 from typing import Optional
 
-from commands2 import SubsystemBase
+from commands.shooter_commands import DoNothingShooter
+from commands2 import Subsystem
 from wpilib import IterativeRobotBase, PWMMotorController, PWMVictorSPX, SmartDashboard
 
-from commands.shooter_commands import DoNothingShooter
 
-
-class Shooter(SubsystemBase):
+class Shooter(Subsystem):
     # Config file section name
     GENERAL_SECTION = "ShooterGeneral"
 

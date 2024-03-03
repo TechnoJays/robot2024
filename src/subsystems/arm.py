@@ -4,7 +4,7 @@
 from configparser import ConfigParser
 from typing import Optional
 
-from commands2 import SubsystemBase
+from commands2 import Subsystem
 from wpilib import PWMVictorSPX, SmartDashboard, AnalogPotentiometer, DigitalInput
 from wpimath.filter import SlewRateLimiter
 
@@ -16,7 +16,7 @@ ARM_DASHBOARD_SPEED = "0_Arm-01-Speed"
 ARM_DASHBOARD_UPPER_LIMIT = "0_Arm-05-Upper-Limit-Switch"
 
 
-class Arm(SubsystemBase):
+class Arm(Subsystem):
     # Config file section name
     GENERAL_SECTION = "ArmGeneral"
     POTENTIOMETER_SECTION = "ArmPotentiometer"

@@ -2,9 +2,9 @@
 # Open Source Software; you can modify and / or share it under the terms of
 # the MIT license file in the root directory of this project
 import typing
-from commands2 import Command, Subsystem
 
-from oi import JoystickAxis, UserController, JoystickButtons, OI
+from commands2 import Command, Subsystem
+from oi import JoystickAxis, UserController, OI
 from subsystems.drivetrain import Drivetrain
 
 
@@ -42,8 +42,8 @@ class TankDrive(Command):
 
     def execute(self):
         """Called repeatedly when this Command is scheduled to run"""
-        slow: bool = self.oi.driver_controller.getLeftBumper()
-        turbo: bool = self.oi.driver_controller.getRightBumper()
+        slow: bool = self.oi.driver_controller.leftBumper()
+        turbo: bool = self.oi.driver_controller.rightBumper()
         dpad_y: float = self.oi.get_axis(
             UserController.DRIVER, JoystickAxis.DPADY
         )
@@ -60,9 +60,7 @@ class TankDrive(Command):
         else:
             left_track: float = self.oi.driver_controller.getLeftY()
             right_track: float = self.oi.driver_controller.getRightY()
-
-        self.drivetrain.tank_drive(left_track * modifier, right_track * modifier)
-        return Command.execute(self)
+            self.drivetrain.tank_drive(left_track * modifier, right_track * modifier)
 
     def isFinished(self) -> bool:
         """

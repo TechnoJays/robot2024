@@ -23,7 +23,7 @@ by pyfrc changes year over year.
           supporting different python versions
 * [pipenv] is useful for dependency management for this project as well
     * `` to create a python 3.11 environment for this project
-    * `pipenv install -r requirements.txt` to setup this project in the created virtualenv
+    * `python -m pip install .` to setup this project in the created virtualenv
     * `pipenv shell` to enter the environment for this project
     * `pip install tox` to install tox in the environment
     * `tox` after that to run the tests
@@ -33,8 +33,8 @@ IDEs like [Pycharm also support pipenv].
 It is very important that you have updated pip to the latest version. You can do so with the command below:
 
 ```bash
-# update `pip` and `setuptools` to the latest versions available
-pip install -U pip setuptools
+# Confirm your python version in python 3 
+python --version
 ```
 
 

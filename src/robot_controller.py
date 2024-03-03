@@ -2,20 +2,25 @@
 # Open Source Software; you can modify and / or share it under the terms of
 # the MIT license file in the root directory of this project
 import configparser
+import logging
 from configparser import ConfigParser
 
 import wpilib
-from commands2 import SubsystemBase, CommandBase, TimedCommandRobot
+from commands.winch_commands import MoveWinch
+
+from commands.shooter_commands import Shoot
+from commands2 import TimedCommandRobot, Subsystem, SequentialCommandGroup
 from wpilib import SmartDashboard, SendableChooser
 
 from commands.arm_commands import ArmMove
 from commands.autonomous_drive_commands import MoveFromLine
 from commands.grabber_commands import Grab, Release, DoNothingGrabber
 from commands.tank_drive_commands import TankDrive
-from oi import OI, JoystickAxis, UserController
-from subsystems.arm import Arm
+from oi import OI
+from subsystems.climbing import Climbing
 from subsystems.drivetrain import Drivetrain
-from subsystems.grabber import Grabber
+from subsystems.shooter import Shooter
+from subsystems.vacuum import Vacuum
 
 
 class RobotController:
@@ -47,16 +52,21 @@ class RobotController:
         """
         Initialize config parsers for subsystems, operator interface, and autonomous
         """
+        logging.debug("Reading configs")
+
         self._subsystems_config = configparser.ConfigParser()
         self._subsystems_config.read(subsystems_config_path)
+        logging.info("Parsed subsystem configs")
 
         self._joystick_config = configparser.ConfigParser()
         self._joystick_config.read(joystick_config_path)
+        logging.info("Parsed joystick configs")
 
         self._autonomous_config = configparser.ConfigParser()
         self._autonomous_config.read(autonomous_config_path)
+        logging.info("Parsed autonomous configs")
 
-    def _init_subsystems(self) -> list[SubsystemBase]:
+    def _init_subsystems(self) -> list[Subsystem]:
         """
         Initialize subsystems managed by the robot controller
         """
@@ -64,17 +74,25 @@ class RobotController:
 
         self._oi = OI(self._joystick_config)
         subsystems.append(self._oi)
+        logging.info("Setup Operator Interface Subsystem")
 
         self._drivetrain = Drivetrain(self._subsystems_config)
         subsystems.append(self._drivetrain)
+        logging.info("Setup Drivetrain Subsystem")
 
-        self._arm = Arm(self._subsystems_config)
-        subsystems.append(self._arm)
+        self._vacuum = Vacuum(self._subsystems_config)
+        subsystems.append(self._vacuum)
+        logging.info("Setup Vacuum Subsystem")
 
-        self._grabber = Grabber(self._subsystems_config)
-        subsystems.append(self._grabber)
+        self._shooter = Shooter(self._subsystems_config)
+        subsystems.append(self._shooter)
+        logging.info("Setup Shooter Subsystem")
+
+        self._climber = Climbing(self._subsystems_config)
+        subsystems.append(self._climber)
+        logging.info("Setup Climber Subsystem")
+
         wpilib.CameraServer.launch(vision_py='vision/vision.py:start_camera')
-
         return subsystems
 
     def mappings(self) -> None:
@@ -89,22 +107,22 @@ class RobotController:
         # set up the default drive command to be tank drive
         self.drivetrain.setDefaultCommand(TankDrive(self.oi, self.drivetrain))
 
-        # set up the default arm command
-        self.arm.setDefaultCommand(
-            ArmMove(
-                self.arm,
-                lambda: self.oi.get_axis(UserController.SCORING, JoystickAxis.LEFTY),
+        # set up the default shooter command
+        self.shooter.setDefaultCommand(
+            Shoot(
+                self.shooter,
+                lambda: self.oi.scoring_controller.getLeftY(),
             )
         )
 
         # set up the default grabber command to be "Grab"
-        self.grabber.setDefaultCommand(DoNothingGrabber(self.grabber))
+        self.climber.setDefaultCommand(MoveWinch(self.climber(), self.oi))
 
         # set up the right bumper of the scoring controller to trigger the grabber to release
-        self.oi.scoring_controller.rightBumper().onTrue(Grab(self.grabber))
-        self.oi.scoring_controller.leftBumper().onTrue(Release(self.grabber))
+        self.oi.scoring_controller.rightBumper().onTrue(Suck(self.vacuum))
+        self.oi.scoring_controller.leftBumper().onTrue(Blow(self.vacuum))
 
-    def get_auto_choice(self) -> CommandBase:
+    def get_auto_choice(self) -> SequentialCommandGroup:
         return self._oi.get_auto_choice()
 
     def _setup_autonomous_smartdashboard(self,
@@ -118,33 +136,41 @@ class RobotController:
         return self._auto_program_chooser
 
     def update_sensors(self) -> None:
-        SmartDashboard.putBoolean("0_Arm-05-RAW-Upper-Limit-Switch", self._arm.upper_limit_switch.get())
-        SmartDashboard.putBoolean("0_Arm-05-RAW-Lower-Limit-Switch", self._arm.lower_limit_switch.get())
+        SmartDashboard.putNumber("Climber-POT-RAW", self._climber.potentiometer_raw())
 
     @property
     def drivetrain(self) -> Drivetrain:
         """
-        Retrieve the drivetrain managed by the robot controller
+        Retrieve the "Drivetrain" subsystem managed by the robot controller
         """
         return self._drivetrain
 
     @property
-    def arm(self) -> Arm:
+    def shooter(self) -> Shooter:
         """
-        Retrieve the "Arm" managed by the robot controller
+        Retrieve the "Shooter" subsystem managed by the robot controller
         """
-        return self._arm
+        return self._shooter
 
     @property
     def oi(self) -> OI:
         """
-        Retrieve the operator interface managed by the robot controller
+        Retrieve the "Operator Interface" managed by the robot controller
         """
         return self._oi
 
     @property
-    def grabber(self) -> Grabber:
-        return self._grabber
+    def vacuum(self) -> Vacuum:
+        """
+        Retrieve the "Vacuum" subsystem managed by the robot controller
+        """
+        return self._vacuum
+
+    def climber(self) -> Climbing:
+        """
+        Retrieve the "Climbing" subsystem managed by the robot controller
+        """
+        return self._climber
 
     @property
     def subsystems_config(self) -> ConfigParser:
