@@ -4,7 +4,7 @@ from commands2 import Subsystem
 from wpilib import PWMTalonSRX
 from wpilib import SmartDashboard
 
-from commands.winch_commands import MoveClimber
+from commands.climber_commands import ClimberDrive
 
 
 class Climber(Subsystem):
@@ -46,7 +46,7 @@ class Climber(Subsystem):
             )
 
     def init_default_command(self):
-        self.setDefaultCommand(MoveClimber(self._robot, "MoveClimber"))
+        self.setDefaultCommand(ClimberDrive(self._robot, "MoveClimber"))
 
     def is_retracted(self) -> bool:
         return self._limit_switch_inverted ^ self._limit_value()

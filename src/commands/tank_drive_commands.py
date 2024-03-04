@@ -49,8 +49,8 @@ class TankDrive(Command):
         elif self.drivetrain.turbo():
             modifier = self.drivetrain.turbo_scaling
 
-        left_track: float = self.oi.driver_controller.getLeftY()
-        right_track: float = self.oi.driver_controller.getRightY()
+        left_track: float = self._oi.driver_controller.getLeftY()
+        right_track: float = self._oi.driver_controller.getRightY()
         self.drivetrain.tank_drive(left_track * modifier, right_track * modifier)
 
     def isFinished(self) -> bool:
@@ -101,9 +101,6 @@ class GoTurbo(Command):
         """
         pass
 
-    def getRequirements(self) -> typing.Set[Subsystem]:
-        return {self._drivetrain}
-
     def turboUpdated(self) -> bool:
         return self._turbo_updated
 
@@ -131,8 +128,58 @@ class ReleaseTurbo(Command):
     def end(self, interrupted: bool) -> None:
         pass
 
-    def getRequirements(self) -> typing.Set[Subsystem]:
-        return {self._drivetrain}
-
     def turboUpdated(self) -> bool:
         return self._turbo_updated
+
+
+class GoSlow(Command):
+
+    def __init__(self, drivetrain: Drivetrain):
+        super().__init__()
+        self._drivetrain = drivetrain
+        self._slow_updated = False
+
+    def initialize(self) -> None:
+        pass
+
+    def execute(self) -> None:
+        self._slow_updated = self._drivetrain.set_slow()
+
+    def isFinished(self) -> bool:
+        return self._slow_updated
+
+    def end(self, interrupted: bool) -> None:
+        """
+        This command is meant to be behind a button press (on press), and so should not be interruptable
+        """
+        pass
+
+    def slowUpdated(self) -> bool:
+        return self._slow_updated
+
+
+class ReleaseSlow(Command):
+
+    def __init__(self, drivetrain: Drivetrain):
+        super().__init__()
+        self._drivetrain = drivetrain
+        self._slow_updated = False
+
+    def initialize(self) -> None:
+        pass
+
+    def execute(self) -> None:
+        """
+        Expect release turbo to return the drivetrains turbo value, which should be false
+        after being released
+        """
+        self._slow_updated = not self._drivetrain.release_slow()
+
+    def isFinished(self) -> bool:
+        return self._slow_updated
+
+    def end(self, interrupted: bool) -> None:
+        pass
+
+    def turboUpdated(self) -> bool:
+        return self._slow_updated

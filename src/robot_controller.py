@@ -10,9 +10,10 @@ from commands2 import Subsystem, SequentialCommandGroup
 from wpilib import SmartDashboard, SendableChooser
 
 from commands.autonomous_drive_commands import MoveFromLine
-from commands.shooter_commands import Shoot
-from commands.tank_drive_commands import TankDrive, GoTurbo, ReleaseTurbo
-from commands.winch_commands import MoveClimber
+from commands.climber_commands import DoNothingClimber
+from commands.shooter_commands import DoNothingShooter, RaiseShooter, LowerShooter, ShooterDrive
+from commands.tank_drive_commands import TankDrive, GoTurbo, ReleaseTurbo, GoSlow, ReleaseSlow
+from commands.vacuum_commands import Vac, VacuumDrive, DoNothingVacuum
 from oi import OI
 from subsystems.climber import Climber
 from subsystems.drivetrain import Drivetrain
@@ -102,22 +103,28 @@ class RobotController:
         # set up the default drive command to be tank drive
         self.drivetrain.setDefaultCommand(TankDrive(self.oi, self.drivetrain))
 
-        # set up the default climber command to be "Grab"
-        self.climber.setDefaultCommand(MoveClimber(self.climber, self.oi))
+        # set up the default vacuum command to be do nothing
+        self.vacuum.setDefaultCommand(DoNothingVacuum(self.vacuum, self.oi))
+        # set up the default climber command to be do nothing
+        self.climber.setDefaultCommand(DoNothingClimber(self.climber, self.oi))
+        # set up the default shooter command to be do nothing
+        self.shooter.setDefaultCommand(DoNothingShooter(self.shooter))
 
-        # set up the default shooter command
-        self.shooter.setDefaultCommand(
-            Shoot(
-                self.shooter,
-            )
-        )
         self.oi.driver_controller.rightBumper().onTrue(GoTurbo(self.drivetrain))
         self.oi.driver_controller.rightBumper().onFalse(ReleaseTurbo(self.drivetrain))
+        self.oi.driver_controller.leftBumper().onTrue(GoSlow(self.drivetrain))
+        self.oi.driver_controller.leftBumper().onFalse(ReleaseSlow(self.drivetrain))
 
         # set up the right bumper of the scoring controller to trigger the grabber to release
-        self.oi.scoring_controller.rightBumper().onTrue(Suck(self.vacuum))
-        self.oi.scoring_controller.leftBumper().onTrue(Blow(self.vacuum))
+        self.oi.scoring_controller.rightBumper().whileTrue(Vac(self.vacuum, self.oi, 1.0))
+        self.oi.scoring_controller.leftBumper().whileTrue(Vac(self.vacuum, self.oi, -1.0))
+        self.oi.scoring_controller.rightTrigger().whileTrue(VacuumDrive(self.vacuum, self.oi, 1.0))
+        self.oi.scoring_controller.leftTrigger().whileTrue(VacuumDrive(self.vacuum, self.oi, -1.0))
 
+        self.oi.scoring_controller.y().whileTrue(RaiseShooter(self.shooter, self.oi))
+        self.oi.scoring_controller.a().whileTrue(LowerShooter(self.shooter, self.oi))
+        self.oi.scoring_controller.rightStick().whileTrue(ShooterDrive(self.shooter, self.oi))
+        
     def get_auto_choice(self) -> SequentialCommandGroup:
         return self._oi.get_auto_choice()
 

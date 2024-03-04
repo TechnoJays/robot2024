@@ -40,7 +40,7 @@ class Shooter(Subsystem):
             Shooter.GENERAL_SECTION, Shooter.MAX_SPEED_KEY
         )
         if self._enabled:
-            print("Shooter enabled")
+            logging.debug("Shooter enabled")
             self._motor = PWMVictorSPX(
                 self._config.getint(Shooter.GENERAL_SECTION, Shooter.CHANNEL_KEY)
             )
