@@ -124,7 +124,7 @@ class RobotController:
         self.oi.scoring_controller.y().whileTrue(RaiseShooter(self.shooter, self.oi))
         self.oi.scoring_controller.a().whileTrue(LowerShooter(self.shooter, self.oi))
         self.oi.scoring_controller.rightStick().whileTrue(ShooterDrive(self.shooter, self.oi))
-        
+
     def get_auto_choice(self) -> SequentialCommandGroup:
         return self._oi.get_auto_choice()
 

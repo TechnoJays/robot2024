@@ -4,8 +4,6 @@ from commands2 import Subsystem
 from wpilib import PWMTalonSRX
 from wpilib import SmartDashboard
 
-from commands.climber_commands import ClimberDrive
-
 
 class Climber(Subsystem):
     # Config file section names
@@ -44,9 +42,6 @@ class Climber(Subsystem):
             self._motor.setInverted(
                 self._config.getboolean(Climber.GENERAL_SECTION, Climber.INVERTED_KEY)
             )
-
-    def init_default_command(self):
-        self.setDefaultCommand(ClimberDrive(self._robot, "MoveClimber"))
 
     def is_retracted(self) -> bool:
         return self._limit_switch_inverted ^ self._limit_value()
