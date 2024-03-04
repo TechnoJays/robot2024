@@ -1,24 +1,23 @@
-from commands2 import Command, CommandBase
+import typing
 
-from oi import UserController, JoystickAxis, OI
+from commands2 import Command, Subsystem
+
+from oi import OI
 from subsystems.shooter import Shooter
 
 
-class Shoot(CommandBase):
+class Shoot(Command):
 
     def __init__(
             self,
             shooter: Shooter,
-            speed: float,
     ):
         super().__init__()
         self._shooter = shooter
-        self._speed = speed
-        self.addRequirements(shooter)
 
     def initialize(self) -> None:
         """Called before the Command is run for the first time."""
-        return Command.initialize(self)
+        pass
 
     def execute(self) -> None:
         """
@@ -33,38 +32,33 @@ class Shoot(CommandBase):
 
         return False
 
+    def getRequirements(self) -> typing.Set[Subsystem]:
+        return {self._shooter}
 
-class ShooterDrive(CommandBase):
+
+class ShooterDrive(Command):
 
     def __init__(
             self,
             shooter: Shooter,
-            # oi: OI,
-            modifier_scaling: float = 1.0,
-            dpad_scaling: float = 0.4
+            oi: OI
     ):
         super().__init__()
         self._shooter = shooter
-        # self._oi = oi
-        self._dpad_scaling = dpad_scaling
-        self._stick_scaling = modifier_scaling
-        self.addRequirements(shooter)
 
     def execute(self):
         """Called repeatedly when this Command is scheduled to run"""
-        shooter: float = self._robot.oi.get_axis(
-            UserController.SCORING, JoystickAxis.RIGHTY
-        )
-        self._robot.shooter.move(shooter * self._stick_scaling)
-
-        return Command.execute(self)
+        self._shooter.move(shooter * self._stick_scaling)
 
     def isFinished(self):
         """Returns true when the Command no longer needs to be run"""
         return True
 
+    def getRequirements(self) -> typing.Set[Subsystem]:
+        return {self._shooter}
 
-class LowerShooter(CommandBase):
+
+class LowerShooter(Command):
 
     def __init__(
             self,
@@ -72,7 +66,6 @@ class LowerShooter(CommandBase):
     ):
         super().__init__()
         self._shooter = shooter
-        self.addRequirements(shooter)
 
     def initialize(self):
         """Called before the Command is run for the first time."""
@@ -81,14 +74,16 @@ class LowerShooter(CommandBase):
     def execute(self):
         """Called repeatedly when this Command is scheduled to run"""
         self._shooter.upheave(False)
-        return Command.execute(self)
 
     def isFinished(self):
         """Returns true when the Command no longer needs to be run"""
         return False
 
+    def getRequirements(self) -> typing.Set[Subsystem]:
+        return {self._shooter}
 
-class DoNothingShooter(CommandBase):
+
+class DoNothingShooter(Command):
 
     def __init__(
             self,
@@ -96,7 +91,6 @@ class DoNothingShooter(CommandBase):
     ):
         super().__init__()
         self._shooter = shooter
-        self.addRequirements(shooter)
 
     def execute(self):
         """Called repeatedly when this Command is scheduled to run"""
@@ -106,8 +100,11 @@ class DoNothingShooter(CommandBase):
         """Returns true when the Command no longer needs to be run"""
         return False
 
+    def getRequirements(self) -> typing.Set[Subsystem]:
+        return {self._shooter}
 
-class RaiseShooter(CommandBase):
+
+class RaiseShooter(Command):
 
     def __init__(
             self,
@@ -119,7 +116,7 @@ class RaiseShooter(CommandBase):
 
     def initialize(self):
         """Called before the Command is run for the first time."""
-        return Command.initialize(self)
+        pass
 
     def execute(self):
         """Called repeatedly when this Command is scheduled to run"""
@@ -128,3 +125,6 @@ class RaiseShooter(CommandBase):
     def isFinished(self):
         """Returns true when the Command no longer needs to be run"""
         return False
+
+    def getRequirements(self) -> typing.Set[Subsystem]:
+        return {self._shooter}

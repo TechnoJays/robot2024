@@ -6,15 +6,15 @@ import logging
 from configparser import ConfigParser
 
 import wpilib
-from commands2 import TimedCommandRobot, Subsystem, SequentialCommandGroup
+from commands2 import Subsystem, SequentialCommandGroup
 from wpilib import SmartDashboard, SendableChooser
 
 from commands.autonomous_drive_commands import MoveFromLine
 from commands.shooter_commands import Shoot
 from commands.tank_drive_commands import TankDrive, GoTurbo, ReleaseTurbo
-from commands.winch_commands import MoveWinch
+from commands.winch_commands import MoveClimber
 from oi import OI
-from subsystems.climbing import Climbing
+from subsystems.climber import Climber
 from subsystems.drivetrain import Drivetrain
 from subsystems.shooter import Shooter
 from subsystems.vacuum import Vacuum
@@ -32,12 +32,10 @@ class RobotController:
     AUTONOMOUS_CONFIG_PATH = "/home/lvuser/py/configs/autonomous.ini"
 
     def __init__(self,
-                 robot: TimedCommandRobot,
                  subsystems_config: str = SUBSYSTEMS_CONFIG_PATH,
                  joystick_config: str = JOYSTICK_CONFIG_PATH,
                  auto_config: str = AUTONOMOUS_CONFIG_PATH
                  ) -> None:
-        self._robot: TimedCommandRobot = robot
         self._init_config(subsystems_config, joystick_config, auto_config)
         self._subsystems = self._init_subsystems()
 
@@ -85,7 +83,7 @@ class RobotController:
         subsystems.append(self._shooter)
         logging.info("Setup Shooter Subsystem")
 
-        self._climber = Climbing(self._subsystems_config)
+        self._climber = Climber(self._subsystems_config)
         subsystems.append(self._climber)
         logging.info("Setup Climber Subsystem")
 
@@ -104,11 +102,13 @@ class RobotController:
         # set up the default drive command to be tank drive
         self.drivetrain.setDefaultCommand(TankDrive(self.oi, self.drivetrain))
 
+        # set up the default climber command to be "Grab"
+        self.climber.setDefaultCommand(MoveClimber(self.climber, self.oi))
+
         # set up the default shooter command
         self.shooter.setDefaultCommand(
             Shoot(
                 self.shooter,
-                lambda: self.oi.scoring_controller.getLeftY(),
             )
         )
         self.oi.driver_controller.rightBumper().onTrue(GoTurbo(self.drivetrain))
@@ -162,7 +162,8 @@ class RobotController:
         """
         return self._vacuum
 
-    def climber(self) -> Climbing:
+    @property
+    def climber(self) -> Climber:
         """
         Retrieve the "Climbing" subsystem managed by the robot controller
         """

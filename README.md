@@ -18,7 +18,7 @@ by pyfrc changes year over year.
   version/dependencies are highly correlated**
     * The most sane method for installing pyenv is using the [pyenv installer]
         * If you are more confident, you can use `brew install pyenv` for macOS and [Homebrew]
-        * On windows, you can use`scoop install python` with [Scoop] as the closest thing to Homebrew
+        * On windows, you can use`scoop install pyenv` with [Scoop] as the closest thing to Homebrew
           (if you have the misfortune to be using Windows and possibly follow [this page] for more instructions on
           supporting different python versions
 * [pipenv] is useful for dependency management for this project as well
@@ -39,8 +39,6 @@ python --version
 
 
 Good luck!
-
-## 
 
 ## Deploying to the Robot
 

@@ -1,16 +1,16 @@
-import configparser
+from configparser import ConfigParser
 
-from commands.winch_commands import MoveWinch
 from commands2 import Subsystem
-from wpilib import DigitalInput, IterativeRobotBase
 from wpilib import PWMTalonSRX
 from wpilib import SmartDashboard
 
+from commands.winch_commands import MoveClimber
 
-class Climbing(Subsystem):
+
+class Climber(Subsystem):
     # Config file section names
-    GENERAL_SECTION = "ClimbingGeneral"
-    LIMIT_SWITCH_SECTION = "ClimbingLimitSwitch"
+    GENERAL_SECTION = "ClimberGeneral"
+    LIMIT_SWITCH_SECTION = "ClimberLimitSwitch"
     ENABLED_KEY = "ENABLED"
     INVERTED_KEY = "INVERTED"
     CHANNEL_KEY = "CHANNEL"
@@ -25,42 +25,28 @@ class Climbing(Subsystem):
     _limit_switch = None
     _limit_switch_inverted = False
 
-    def __init__(
-            self,
-            robot: IterativeRobotBase,
-            name: str = "Climber",
-            configfile: str = "/home/lvuser/py/configs/subsystems.ini",
-    ):
-        self._robot = robot
-        self._config = configparser.ConfigParser()
-        self._config.read(configfile)
-        self._init_components()
-        self._update_smartdashboard_sensors()
-        self.setName(name)
+    def __init__(self, config: ConfigParser):
         super().__init__()
+        self._config = config
+        self._init_components()
+        # TODO refactor smartdashboard updates to robot_controller
+        self._update_smartdashboard_sensors()
 
     def _init_components(self):
         self._max_speed = self._config.getfloat(
-            Climbing.GENERAL_SECTION, Climbing.MAX_SPEED_KEY
+            Climber.GENERAL_SECTION, Climber.MAX_SPEED_KEY
         )
 
-        if self._config.getboolean(Climbing.GENERAL_SECTION, Climbing.ENABLED_KEY):
+        if self._config.getboolean(Climber.GENERAL_SECTION, Climber.ENABLED_KEY):
             self._motor = PWMTalonSRX(
-                self._config.getint(Climbing.GENERAL_SECTION, Climbing.CHANNEL_KEY)
+                self._config.getint(Climber.GENERAL_SECTION, Climber.CHANNEL_KEY)
             )
             self._motor.setInverted(
-                self._config.getboolean(Climbing.GENERAL_SECTION, Climbing.INVERTED_KEY)
-            )
-        if self._config.getboolean(Climbing.LIMIT_SWITCH_SECTION, Climbing.ENABLED_KEY):
-            self._limit_switch = DigitalInput(
-                self._config.getint(Climbing.LIMIT_SWITCH_SECTION, Climbing.CHANNEL_KEY)
-            )
-            self._limit_switch_inverted = self._config.getboolean(
-                Climbing.LIMIT_SWITCH_SECTION, Climbing.INVERTED_KEY
+                self._config.getboolean(Climber.GENERAL_SECTION, Climber.INVERTED_KEY)
             )
 
-    def initDefaultCommand(self):
-        self.setDefaultCommand(MoveWinch(self._robot, "MoveWinch"))
+    def init_default_command(self):
+        self.setDefaultCommand(MoveClimber(self._robot, "MoveClimber"))
 
     def is_retracted(self) -> bool:
         return self._limit_switch_inverted ^ self._limit_value()

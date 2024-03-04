@@ -105,16 +105,12 @@ def test_init_default(command_default: TankDrive, mock_oi: oi.OI, drivetrain_def
     assert command_default.oi == mock_oi
     assert command_default.drivetrain is not None
     assert command_default.drivetrain == drivetrain_default
-    assert command_default.dpad_scaling == 0.4
-    assert command_default.stick_scaling == 0.5
 
 
 def test_init_full(mock_oi: oi.OI, drivetrain_default: Drivetrain):
     td = TankDrive(mock_oi, drivetrain_default)
     assert td is not None
     assert td.drivetrain is not None
-    assert td.dpad_scaling == 0.4
-    assert td.stick_scaling == 0.5
 
 
 def test_initialize(command_default: Command):

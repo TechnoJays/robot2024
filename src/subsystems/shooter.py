@@ -1,9 +1,9 @@
 import configparser
+import logging
 from typing import Optional
 
-from commands.shooter_commands import DoNothingShooter
 from commands2 import Subsystem
-from wpilib import IterativeRobotBase, PWMMotorController, PWMVictorSPX, SmartDashboard
+from wpilib import PWMMotorController, PWMVictorSPX, SmartDashboard
 
 
 class Shooter(Subsystem):
@@ -17,33 +17,25 @@ class Shooter(Subsystem):
     MAX_SPEED_KEY = "MAX_SPEED"
     MODIFIER_SCALING_KEY = "MODIFIER_SCALING"
 
-    _robot: IterativeRobotBase = None
-
     _enabled: bool = False
 
     _motor: PWMMotorController = None
     _max_speed: float = 0.0
     _modifier_scaling: Optional[float] = None
 
-    def __init__(
-        self,
-        robot: IterativeRobotBase,
-        name: str = "Shooter",
-        configfile: str = "/home/lvuser/py/configs/subsystems.ini",
-    ):
-        self._robot = robot
-        self._config = configparser.ConfigParser()
-        self._config.read(configfile)
+    def __init__(self, config: configparser.ConfigParser):
+        super().__init__()
+        self._config = config
+        self._init_components()
+        logging.info("Shooter initialized")
+        # TODO move smartdashboard update to Robot Controller
+        Shooter._update_smartdashboard(0.0)
+
+    def _init_components(self):
         self._enabled = self._config.getboolean(
             Shooter.GENERAL_SECTION, Shooter.ENABLED_KEY
         )
-        self._init_components()
-        print("Shooter initialized")
-        Shooter._update_smartdashboard(0.0)
-        self.setName(name)
-        super().__init__()
 
-    def _init_components(self):
         self._max_speed = self._config.getfloat(
             Shooter.GENERAL_SECTION, Shooter.MAX_SPEED_KEY
         )
@@ -55,9 +47,6 @@ class Shooter(Subsystem):
             self._motor.setInverted(
                 self._config.getboolean(Shooter.GENERAL_SECTION, Shooter.INVERTED_KEY)
             )
-
-    def initDefaultCommand(self):
-        self.setDefaultCommand(DoNothingShooter(self._robot))
 
     def move(self, speed: float):
         adjusted_speed = 0.0

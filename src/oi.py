@@ -1,6 +1,7 @@
 import configparser
 from enum import Enum
 
+from commands2 import Subsystem
 from commands2.button import CommandXboxController
 from wpilib import DriverStation
 from wpilib import SendableChooser
@@ -39,7 +40,7 @@ class UserController(Enum):
     SCORING = 1
 
 
-class OI:
+class OI(Subsystem):
     """
     This class is the glue that binds the controls on the physical operator
     interface to the commands and command groups that allow control of the robot.
@@ -67,10 +68,8 @@ class OI:
     BACK_KEY = "BACK"
     START_KEY = "START"
 
-    def __init__(
-            self,
-            config: configparser.ConfigParser,
-    ):
+    def __init__(self, config: configparser.ConfigParser):
+        super().__init__()
         self._config = config
 
         self._controllers: list[CommandXboxController] = []

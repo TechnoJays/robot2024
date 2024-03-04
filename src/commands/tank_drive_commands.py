@@ -34,8 +34,6 @@ class TankDrive(Command):
         super().__init__()
         self._oi = oi
         self._drivetrain = drivetrain
-        self._dpad_scaling = drivetrain.dpad_scaling
-        self._stick_scaling = drivetrain.modifier_scaling
 
     def initialize(self):
         """Called before the Command is run for the first time."""
@@ -44,12 +42,12 @@ class TankDrive(Command):
     def execute(self):
         """Called repeatedly when this Command is scheduled to run"""
 
-        modifier = self._drivetrain.default_scaling
+        modifier = self._drivetrain.scaling
 
         if self.drivetrain.slow():
-            modifier = self._drivetrain.modifier_scaling
+            modifier = self._drivetrain.slow_scaling
         elif self.drivetrain.turbo():
-            modifier = 1.0
+            modifier = self.drivetrain.turbo_scaling
 
         left_track: float = self.oi.driver_controller.getLeftY()
         right_track: float = self.oi.driver_controller.getRightY()
@@ -75,14 +73,6 @@ class TankDrive(Command):
     @property
     def drivetrain(self) -> Drivetrain:
         return self._drivetrain
-
-    @property
-    def dpad_scaling(self) -> float:
-        return self._dpad_scaling
-
-    @property
-    def stick_scaling(self):
-        return self._stick_scaling
 
     @property
     def oi(self) -> OI:

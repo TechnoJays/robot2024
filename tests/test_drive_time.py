@@ -1,7 +1,6 @@
 from configparser import ConfigParser
 
 import pytest
-from wpilib import IterativeRobotBase
 from wpilib.simulation import PWMSim
 
 from commands.arcade_drive_commands import DriveTime
@@ -63,15 +62,11 @@ def test_initialize(command_default: DriveTime):
     ],
 )
 def test_execute(
-        robot: IterativeRobotBase,
         drivetrain_default: Drivetrain,
         speed: float,
         left_ex_speed: float,
         right_ex_speed: float,
 ):
-    # given: a drivetrain
-    robot.drivetrain = drivetrain_default
-
     # and: left and right motors on the drive train
     left_motor_sim = PWMSim(drivetrain_default._left_motor.getChannel())
     right_motor_sim = PWMSim(drivetrain_default._right_motor.getChannel())
@@ -98,14 +93,11 @@ def test_interrupted(command_default: DriveTime):
 
 
 def test_end(
-        robot: IterativeRobotBase,
         command_default: DriveTime,
         drivetrain_default: Drivetrain,
 ):
     assert command_default._stopwatch._running is False
 
-    # given: a drivetrain
-    robot.drivetrain = drivetrain_default
     # and: left and right motors on the drive train
     left_motor_sim = PWMSim(drivetrain_default._left_motor.getChannel())
     right_motor_sim = PWMSim(drivetrain_default._right_motor.getChannel())

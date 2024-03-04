@@ -28,8 +28,8 @@ class Drivetrain(Subsystem):
     REVERSED_KEY = "REVERSED"
     MAX_SPEED_KEY = "MAX_SPEED"
     DEFAULT_SCALING_KEY = "DEFAULT_SCALING"
-    MODIFIER_SCALING_KEY = "MODIFIER_SCALING"
-    DPAD_SCALING_KEY = "DPAD_SCALING"
+    SLOW_SCALING_KEY = "SLOW_SCALING"
+    TURBO_SCALING_KEY = "TURBO_SCALING"
 
     # Default arcade drive rotation modifier to -1 for DifferentialDrive
     _arcade_rotation_modifier: float = -1
@@ -53,13 +53,13 @@ class Drivetrain(Subsystem):
         self._max_speed = self._config.getfloat(
             Drivetrain.GENERAL_SECTION, Drivetrain.MAX_SPEED_KEY
         )
-        self._modifier_scaling = self._config.getfloat(
-            Drivetrain.GENERAL_SECTION, Drivetrain.MODIFIER_SCALING_KEY
+        self._slow_scaling = self._config.getfloat(
+            Drivetrain.GENERAL_SECTION, Drivetrain.SLOW_SCALING_KEY
         )
-        self._dpad_scaling = self._config.getfloat(
-            Drivetrain.GENERAL_SECTION, Drivetrain.DPAD_SCALING_KEY
+        self._turbo_scaling = self._config.getfloat(
+            Drivetrain.GENERAL_SECTION, Drivetrain.TURBO_SCALING_KEY
         )
-        self._default_scaling = self._config.getfloat(
+        self._scaling = self._config.getfloat(
             Drivetrain.GENERAL_SECTION, Drivetrain.DEFAULT_SCALING_KEY
         )
 
@@ -158,16 +158,16 @@ class Drivetrain(Subsystem):
         return self._max_speed
 
     @property
-    def modifier_scaling(self) -> float:
-        return self._modifier_scaling
+    def slow_scaling(self) -> float:
+        return self._slow_scaling
 
     @property
-    def dpad_scaling(self) -> float:
-        return self._dpad_scaling
-    
+    def turbo_scaling(self) -> float:
+        return self._turbo_scaling
+
     @property
-    def default_scaling(self) -> float:
-        return self._default_scaling
+    def scaling(self) -> float:
+        return self._scaling
 
     def get_gyro_angle(self) -> float:
         if self._gyro:

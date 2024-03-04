@@ -47,7 +47,7 @@ class FullWinchRetraction(Command):
         return {self._robot.climbing}
 
 
-class MoveWinch(Command):
+class MoveClimber(Command):
     _robot: IterativeRobotBase = None
 
     def __init__(self, robot, name=None, timeout=15):

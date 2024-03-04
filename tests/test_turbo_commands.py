@@ -7,26 +7,26 @@ from oi import OI
 from subsystems.drivetrain import Drivetrain
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="function")
 def config_default() -> ConfigParser:
     config = ConfigParser()
     config.read("./test_configs/drivetrain_default.ini")
     return config
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="function")
 def drivetrain_default(config_default: ConfigParser):
     return Drivetrain(config_default)
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="function")
 def joy_config() -> ConfigParser:
     config = ConfigParser()
     config.read("./test_configs/joysticks_default.ini")
     return config
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="function")
 def oi_default(joy_config: ConfigParser):
     oi = OI(joy_config)
     return oi

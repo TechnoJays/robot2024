@@ -50,11 +50,11 @@ class RetrojaysRobot(TimedCommandRobot):
         This function also checks if the robot is currently running as a simulation
         """
         if self.isSimulation():
-            self._robot_controller = RobotController(self, self.SIM_SUBSYSTEMS_CONFIG_PATH,
+            self._robot_controller = RobotController(self.SIM_SUBSYSTEMS_CONFIG_PATH,
                                                      self.SIM_JOYSTICK_CONFIG_PATH,
                                                      self.SIM_AUTONOMOUS_CONFIG_PATH)
         else:
-            self._robot_controller = RobotController(self)
+            self._robot_controller = RobotController()
         self._robot_controller.mappings()
 
     def robotPeriodic(self) -> None:
