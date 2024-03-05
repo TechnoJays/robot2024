@@ -46,8 +46,10 @@ robotpy_extras = [
     # "phoenix5"
     # "phoenix6"
     # "playingwithfusion"
+    "pyfrc",
     # "rev"
     # "romi"
-    "sim"
+    "sim",
+    #"xrp"
 ]
 requires = ["numpy"]
