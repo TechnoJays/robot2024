@@ -1,7 +1,7 @@
 from configparser import ConfigParser
 
 from commands2 import Subsystem
-from wpilib import PWMVictorSPX
+from wpilib import PWMVictorSPX, PWMTalonSRX
 from wpilib import SmartDashboard
 
 
@@ -28,7 +28,7 @@ class Vacuum(Subsystem):
             Vacuum.GENERAL_SECTION, Vacuum.MAX_SPEED_KEY
         )
         if self._config.getboolean(Vacuum.GENERAL_SECTION, Vacuum.ENABLED_KEY):
-            self._motor = PWMVictorSPX(
+            self._motor = PWMTalonSRX(
                 self._config.getint(Vacuum.GENERAL_SECTION, Vacuum.CHANNEL_KEY)
             )
             self._motor.setInverted(

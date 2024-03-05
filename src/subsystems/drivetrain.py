@@ -5,7 +5,7 @@ from configparser import ConfigParser
 from typing import Optional
 
 from commands2 import Subsystem
-from wpilib import ADXRS450_Gyro
+from wpilib import ADXRS450_Gyro, MotorControllerGroup, PWMSparkMax, PWMTalonSRX
 from wpilib import PWMMotorController, PWMVictorSPX
 from wpilib import SmartDashboard
 from wpilib.drive import DifferentialDrive
@@ -66,19 +66,26 @@ class Drivetrain(Subsystem):
         )
 
         self._left_motor1 = self._init_motor(Drivetrain.LEFT_MOTOR_SECTION1)
-        self._left_motor2 = self._init_motor(Drivetrain.LEFT_MOTOR_SECTION1)
-        self._right_motor1 = self._init_motor(Drivetrain.RIGHT_MOTOR_SECTION1)
-        self._right_motor2 = self._init_motor(Drivetrain.RIGHT_MOTOR_SECTION1)
+        self._left_motor2 = self._init_motor(Drivetrain.LEFT_MOTOR_SECTION2)
+        self._left_m = MotorControllerGroup(self._left_motor1, self._left_motor2)
 
-        if self._left_motor1 and self._right_motor1:
-            self._robot_drive = DifferentialDrive(self._left_motor1, self._right_motor1)
+        self._right_motor1 = self._init_motor(Drivetrain.RIGHT_MOTOR_SECTION1)
+        self._right_motor2 = self._init_motor(Drivetrain.RIGHT_MOTOR_SECTION2)
+        self._right_m = MotorControllerGroup(self._right_motor1, self._right_motor2)
+
+        if self._left_m and self._right_m:
+            self._robot_drive = DifferentialDrive(self._left_m, self._right_m)
             self._robot_drive.setSafetyEnabled(False)
 
         self._l_slew_rate_limiter = SlewRateLimiter(0.5)
         self._r_slew_rate_limiter = SlewRateLimiter(0.5)
 
-    def _init_motor(self, config_section: str) -> PWMVictorSPX:
-        motor = PWMVictorSPX(self._config.getint(config_section, Drivetrain.CHANNEL_KEY))
+    def _init_motor(self, config_section: str) -> PWMMotorController:
+        if self._config.get(config_section, Drivetrain.TYPE_KEY) == "SPARKMAX":
+            motor = PWMSparkMax(self._config.getint(config_section, Drivetrain.CHANNEL_KEY))
+        else:
+            motor = PWMTalonSRX(self._config.getint(config_section, Drivetrain.CHANNEL_KEY))
+
         motor.setInverted(self._config.getboolean(config_section, Drivetrain.INVERTED_KEY))
         if not self._config.getboolean(config_section, Drivetrain.ENABLED_KEY):
             motor.disable()
@@ -102,7 +109,7 @@ class Drivetrain(Subsystem):
         # TODO: Insert slew rate filters
         left = left_speed * self._max_speed
         right = right_speed * self._max_speed
-        self._robot_drive.tankDrive(right, left, False)
+        self._robot_drive.tankDrive(left, right, False)
         Drivetrain._update_smartdashboard_tank_drive(left_speed, right_speed)
         self.get_gyro_angle()
         self._update_smartdashboard_sensors(self._gyro_angle)
@@ -146,12 +153,12 @@ class Drivetrain(Subsystem):
         SmartDashboard.putNumber("Gyro Angle", gyro_angle)
 
     @property
-    def left_motor(self) -> PWMMotorController:
-        return self._left_motor1
+    def left_motor(self) -> MotorControllerGroup:
+        return self._left_m
 
     @property
-    def right_motor(self) -> PWMMotorController:
-        return self._right_motor1
+    def right_motor(self) -> MotorControllerGroup:
+        return self._right_m
 
     @property
     def robot_drive(self) -> DifferentialDrive:

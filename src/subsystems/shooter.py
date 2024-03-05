@@ -2,7 +2,7 @@ import configparser
 import logging
 
 from commands2 import Subsystem
-from wpilib import PWMMotorController, PWMVictorSPX, SmartDashboard
+from wpilib import PWMMotorController, PWMVictorSPX, SmartDashboard, PWMTalonSRX
 
 
 class Shooter(Subsystem):
@@ -39,7 +39,7 @@ class Shooter(Subsystem):
         )
         if self._enabled:
             logging.debug("Shooter enabled")
-            self._motor = PWMVictorSPX(
+            self._motor = PWMTalonSRX(
                 self._config.getint(Shooter.GENERAL_SECTION, Shooter.CHANNEL_KEY)
             )
             self._motor.setInverted(

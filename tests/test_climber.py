@@ -34,18 +34,18 @@ def test_is_retracted(config_default: ConfigParser):
     climber = Climber(config_default)
     
 
-
+@pytest.mark.skip(reason="Need to get pyfrc/sim working")
 def test_is_extended():
     assert False
 
-
+@pytest.mark.skip(reason="Need to get pyfrc/sim working")
 def test__update_smartdashboard_sensors():
     assert False
 
-
+@pytest.mark.skip(reason="Need to get pyfrc/sim working")
 def test_move_winch():
     assert False
 
-
+@pytest.mark.skip(reason="Need to get pyfrc/sim working")
 def test_potentiometer():
     assert False

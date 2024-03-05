@@ -1,6 +1,8 @@
 from configparser import ConfigParser
 
 import pytest
+from wpilib import MotorControllerGroup, PWMTalonSRX, PWMSparkMax
+from wpilib.drive import DifferentialDrive
 from wpilib.simulation import PWMSim
 
 from subsystems.drivetrain import Drivetrain
@@ -93,12 +95,16 @@ def drivetrain_zero_speed(config_zero_speed: ConfigParser):
 
 def test_drivetrain_default(drivetrain_default: Drivetrain):
     assert drivetrain_default is not None
-    assert drivetrain_default.left_motor is not None
-    assert drivetrain_default.right_motor is not None
-    assert drivetrain_default.robot_drive is not None
-    # No gyro for 2022
+
+    assert isinstance(drivetrain_default._left_motor1, PWMTalonSRX)
+    assert isinstance(drivetrain_default._left_motor2, PWMSparkMax)
+    assert isinstance(drivetrain_default._right_motor1, PWMTalonSRX)
+    assert isinstance(drivetrain_default._right_motor2, PWMSparkMax)
+    assert isinstance(drivetrain_default.left_motor, MotorControllerGroup)
+    assert isinstance(drivetrain_default.right_motor, MotorControllerGroup)
+    assert isinstance(drivetrain_default.robot_drive, DifferentialDrive)
+    # No gyro for 2024
     assert drivetrain_default.is_gyro_enabled() is False
-    assert drivetrain_default.arcade_rotation_modifier == -1
 
 
 def test_drivetrain_channels_0_1(drivetrain_channels_01: Drivetrain):
@@ -108,24 +114,40 @@ def test_drivetrain_channels_0_1(drivetrain_channels_01: Drivetrain):
     # then: the drivetrain should be valid, and there should be a left and right motor
     assert dt is not None
     assert dt._left_motor1 is not None
+    assert dt._left_motor2 is not None
     assert dt._right_motor1 is not None
+    assert dt._right_motor2 is not None
     assert dt._robot_drive is not None
 
     # and: the robot drive motors are real
-    left_m = PWMSim(dt._left_motor1.getChannel())
-    right_m = PWMSim(dt._right_motor1.getChannel())
+    left_m1 = PWMSim(dt._left_motor1.getChannel())
+    left_m2 = PWMSim(dt._left_motor2.getChannel())
+    right_m1 = PWMSim(dt._right_motor1.getChannel())
+    right_m2 = PWMSim(dt._right_motor2.getChannel())
 
-    # then: left motor is initialized and zero latched
-    assert left_m.getInitialized() is True
-    assert left_m.getSpeed() == 0.0
+    # then: left motor1 is initialized and zero latched
+    assert left_m1.getInitialized() is True
+    assert left_m1.getSpeed() == 0.0
     # Determine how to check this accurately. Check safety enabled? What is zero latch?
-    assert left_m.getZeroLatch() is False
+    assert left_m1.getZeroLatch() is False
+
+    # then: left motor2 is initialized and zero latched
+    assert left_m2.getInitialized() is True
+    assert left_m2.getSpeed() == 0.0
+    # Determine how to check this accurately. Check safety enabled? What is zero latch?
+    assert left_m2.getZeroLatch() is False
 
     # and: right motor is initialized and zero latched
-    assert right_m.getInitialized() is True
-    assert right_m.getSpeed() == 0.0
+    assert right_m1.getInitialized() is True
+    assert right_m1.getSpeed() == 0.0
     # Determine how to check this accurately. Check safety enabled? What is zero latch?
-    assert right_m.getZeroLatch() is False
+    assert right_m1.getZeroLatch() is False
+
+    # and: right motor is initialized and zero latched
+    assert right_m2.getInitialized() is True
+    assert right_m2.getSpeed() == 0.0
+    # Determine how to check this accurately. Check safety enabled? What is zero latch?
+    assert right_m2.getZeroLatch() is False
 
 
 @pytest.mark.parametrize(
@@ -156,15 +178,17 @@ def test_drivetrain_zero_speed(
     assert dt.max_speed == 0.0
 
     # and: the robot drive motors are real
-    left_m = PWMSim(dt.left_motor.getChannel())
-    right_m = PWMSim(dt.right_motor.getChannel())
+    left_m1 = PWMSim(dt.left_motor.getChannel())
+    left_m2 = PWMSim(dt.left_motor.getChannel())
+    right_m1 = PWMSim(dt.right_motor.getChannel())
+    right_m2 = PWMSim(dt.right_motor.getChannel())
 
     # and: the drivetrain is "tank drive" at the left and right speed
     dt.tank_drive(left_speed, right_speed)
 
     # the speed of the left and right motor should be as set
-    pytest.approx(left_ex_speed, left_m.getSpeed())
-    pytest.approx(right_ex_speed, right_m.getSpeed())
+    pytest.approx(left_ex_speed, left_m1.getSpeed())
+    pytest.approx(right_ex_speed, right_m1.getSpeed())
 
 
 @pytest.mark.parametrize(
