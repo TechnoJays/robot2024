@@ -105,8 +105,8 @@ def test_execute(
     td.initialize()
 
     # and: the robot drive motors are real
-    left_m = PWMSim(drivetrain_default._left_motor.getChannel())
-    right_m = PWMSim(drivetrain_default._right_motor.getChannel())
+    left_m = PWMSim(drivetrain_default._left_motor1.getChannel())
+    right_m = PWMSim(drivetrain_default._right_motor1.getChannel())
 
     td.execute()
     pytest.approx(left_ex_speed, left_m.getSpeed())

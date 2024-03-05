@@ -67,8 +67,8 @@ def test_execute(
     dt = TurnTime(drivetrain_default, 5, speed)
     assert dt is not None
 
-    left_m = PWMSim(drivetrain_default._left_motor.getChannel())
-    right_m = PWMSim(drivetrain_default._right_motor.getChannel())
+    left_m = PWMSim(drivetrain_default._left_motor1.getChannel())
+    right_m = PWMSim(drivetrain_default._right_motor1.getChannel())
 
     dt.initialize()
     dt.execute()
@@ -109,8 +109,8 @@ def test_command_full(
     assert drivetrain_default is not None
 
     # and: left and right motors on the drivetrain
-    left_m = PWMSim(drivetrain_default._left_motor.getChannel())
-    right_m = PWMSim(drivetrain_default._right_motor.getChannel())
+    left_m = PWMSim(drivetrain_default._left_motor1.getChannel())
+    right_m = PWMSim(drivetrain_default._right_motor1.getChannel())
 
     # and: a command to turn the robot for some time period
     tt = TurnTime(drivetrain_default, duration, speed)

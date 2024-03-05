@@ -107,13 +107,13 @@ def test_drivetrain_channels_0_1(drivetrain_channels_01: Drivetrain):
 
     # then: the drivetrain should be valid, and there should be a left and right motor
     assert dt is not None
-    assert dt._left_motor is not None
-    assert dt._right_motor is not None
+    assert dt._left_motor1 is not None
+    assert dt._right_motor1 is not None
     assert dt._robot_drive is not None
 
     # and: the robot drive motors are real
-    left_m = PWMSim(dt._left_motor.getChannel())
-    right_m = PWMSim(dt._right_motor.getChannel())
+    left_m = PWMSim(dt._left_motor1.getChannel())
+    right_m = PWMSim(dt._right_motor1.getChannel())
 
     # then: left motor is initialized and zero latched
     assert left_m.getInitialized() is True
@@ -234,8 +234,8 @@ def test_drivetrain_3_4_speed(
     assert dt.max_speed == 0.75
 
     # and: the robot drive motors are real
-    left_m = PWMSim(dt._left_motor.getChannel())
-    right_m = PWMSim(dt._right_motor.getChannel())
+    left_m = PWMSim(dt._left_motor1.getChannel())
+    right_m = PWMSim(dt._right_motor1.getChannel())
 
     # and the drivetrain is "tank drive" at the left right
     dt.tank_drive(left_speed, right_speed)
@@ -273,8 +273,8 @@ def test_drivetrain_full_speed(
     assert dt.max_speed == 1.0
 
     # and: the robot drive motors are real
-    left_m = PWMSim(dt._left_motor.getChannel())
-    right_m = PWMSim(dt._right_motor.getChannel())
+    left_m = PWMSim(dt._left_motor1.getChannel())
+    right_m = PWMSim(dt._right_motor1.getChannel())
 
     # and the drivetrain is "tank drive" at the left right
     dt.tank_drive(left_speed, right_speed)
@@ -291,8 +291,8 @@ def test_drivetrain_left_inverted(config_left_inverted: ConfigParser):
     assert dt.right_motor is not None
     assert dt.robot_drive is not None
 
-    left_m = PWMSim(dt._left_motor.getChannel())
-    right_m = PWMSim(dt._right_motor.getChannel())
+    left_m = PWMSim(dt._left_motor1.getChannel())
+    right_m = PWMSim(dt._right_motor1.getChannel())
 
     assert left_m.getInitialized() is True
     assert left_m.getSpeed() == 0.0
@@ -300,8 +300,8 @@ def test_drivetrain_left_inverted(config_left_inverted: ConfigParser):
     assert right_m.getInitialized() is True
     assert right_m.getSpeed() == 0.0
     assert right_m.getZeroLatch() is False
-    assert dt._left_motor.getInverted() is True
-    assert dt._right_motor.getInverted() is False
+    assert dt._left_motor1.getInverted() is True
+    assert dt._right_motor1.getInverted() is False
 
 
 def test_drivetrain_right_inverted(config_right_inverted: ConfigParser):
@@ -311,8 +311,8 @@ def test_drivetrain_right_inverted(config_right_inverted: ConfigParser):
     assert dt.right_motor is not None
     assert dt.robot_drive is not None
 
-    left_m = PWMSim(dt._left_motor.getChannel())
-    right_m = PWMSim(dt._right_motor.getChannel())
+    left_m = PWMSim(dt._left_motor1.getChannel())
+    right_m = PWMSim(dt._right_motor1.getChannel())
 
     assert left_m.getInitialized() is True
     assert left_m.getSpeed() == 0.0

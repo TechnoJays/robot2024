@@ -15,8 +15,10 @@ from wpimath.filter import SlewRateLimiter
 class Drivetrain(Subsystem):
     # Config file section names
     GENERAL_SECTION = "DrivetrainGeneral"
-    LEFT_MOTOR_SECTION = "DrivetrainLeftMotor"
-    RIGHT_MOTOR_SECTION = "DrivetrainRightMotor"
+    LEFT_MOTOR_SECTION1 = "DrivetrainLeftMotor1"
+    LEFT_MOTOR_SECTION2 = "DrivetrainLeftMotor2"
+    RIGHT_MOTOR_SECTION1 = "DrivetrainRightMotor1"
+    RIGHT_MOTOR_SECTION2 = "DrivetrainRightMotor2"
     GYRO_SECTION = "DrivetrainGyro"
 
     # Key names within each section (many of the keys are used across sections)
@@ -63,11 +65,13 @@ class Drivetrain(Subsystem):
             Drivetrain.GENERAL_SECTION, Drivetrain.DEFAULT_SCALING_KEY
         )
 
-        self._left_motor = self._init_motor(Drivetrain.LEFT_MOTOR_SECTION)
-        self._right_motor = self._init_motor(Drivetrain.RIGHT_MOTOR_SECTION)
+        self._left_motor1 = self._init_motor(Drivetrain.LEFT_MOTOR_SECTION1)
+        self._left_motor2 = self._init_motor(Drivetrain.LEFT_MOTOR_SECTION1)
+        self._right_motor1 = self._init_motor(Drivetrain.RIGHT_MOTOR_SECTION1)
+        self._right_motor2 = self._init_motor(Drivetrain.RIGHT_MOTOR_SECTION1)
 
-        if self._left_motor and self._right_motor:
-            self._robot_drive = DifferentialDrive(self._left_motor, self._right_motor)
+        if self._left_motor1 and self._right_motor1:
+            self._robot_drive = DifferentialDrive(self._left_motor1, self._right_motor1)
             self._robot_drive.setSafetyEnabled(False)
 
         self._l_slew_rate_limiter = SlewRateLimiter(0.5)
@@ -143,11 +147,11 @@ class Drivetrain(Subsystem):
 
     @property
     def left_motor(self) -> PWMMotorController:
-        return self._left_motor
+        return self._left_motor1
 
     @property
     def right_motor(self) -> PWMMotorController:
-        return self._right_motor
+        return self._right_motor1
 
     @property
     def robot_drive(self) -> DifferentialDrive:

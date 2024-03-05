@@ -68,8 +68,8 @@ def test_execute(
         right_ex_speed: float,
 ):
     # and: left and right motors on the drive train
-    left_motor_sim = PWMSim(drivetrain_default._left_motor.getChannel())
-    right_motor_sim = PWMSim(drivetrain_default._right_motor.getChannel())
+    left_motor_sim = PWMSim(drivetrain_default._left_motor1.getChannel())
+    right_motor_sim = PWMSim(drivetrain_default._right_motor1.getChannel())
 
     # and: a command to drive the robot forward for five seconds
     dt = DriveTime(drivetrain_default, 5, speed)
@@ -99,8 +99,8 @@ def test_end(
     assert command_default._stopwatch._running is False
 
     # and: left and right motors on the drive train
-    left_motor_sim = PWMSim(drivetrain_default._left_motor.getChannel())
-    right_motor_sim = PWMSim(drivetrain_default._right_motor.getChannel())
+    left_motor_sim = PWMSim(drivetrain_default._left_motor1.getChannel())
+    right_motor_sim = PWMSim(drivetrain_default._right_motor1.getChannel())
 
     # then: the speed of both motors should match the speed from the command
     assert 0.0 == pytest.approx(left_motor_sim.getSpeed())
@@ -130,8 +130,8 @@ def test_command_full(
     assert drivetrain_default is not None
 
     # and: left and right motors on the drive train
-    left_motor_sim = PWMSim(drivetrain_default._left_motor.getChannel())
-    right_motor_sim = PWMSim(drivetrain_default._right_motor.getChannel())
+    left_motor_sim = PWMSim(drivetrain_default._left_motor1.getChannel())
+    right_motor_sim = PWMSim(drivetrain_default._right_motor1.getChannel())
 
     # and: a command to drive with a duration and speed, measured by a stopwatch
     dt = DriveTime(drivetrain_default, duration, speed)
