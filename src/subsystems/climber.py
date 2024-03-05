@@ -1,27 +1,21 @@
 from configparser import ConfigParser
 
 from commands2 import Subsystem
-from wpilib import PWMTalonSRX
+from wpilib import PWMTalonSRX, AnalogPotentiometer
 from wpilib import SmartDashboard
 
 
 class Climber(Subsystem):
     # Config file section names
     GENERAL_SECTION = "ClimberGeneral"
-    LIMIT_SWITCH_SECTION = "ClimberLimitSwitch"
+    CLIMBER_LIMITS_SECTION = "ClimberLimits"
     ENABLED_KEY = "ENABLED"
-    INVERTED_KEY = "INVERTED"
-    CHANNEL_KEY = "CHANNEL"
     MAX_SPEED_KEY = "MAX_SPEED"
-
-    _max_speed = 0
-
-    _robot = None
-    _config = None
-    _motor = None
-
-    _limit_switch = None
-    _limit_switch_inverted = False
+    CHANNEL_KEY = "CHANNEL"
+    INVERTED_KEY = "INVERTED"
+    FULL_RANGE_KEY = "FULL_RANGE"
+    EXTENDED_THRESHOLD_KEY = "EXTENDED_THRESHOLD"
+    RETRACTED_THRESHOLD_KEY = "RETRACTED_THRESHOLD"
 
     def __init__(self, config: ConfigParser):
         super().__init__()
@@ -31,44 +25,43 @@ class Climber(Subsystem):
         self._update_smartdashboard_sensors()
 
     def _init_components(self):
-        self._max_speed = self._config.getfloat(
-            Climber.GENERAL_SECTION, Climber.MAX_SPEED_KEY
-        )
+        self._max_speed = self._config.getfloat(Climber.GENERAL_SECTION, Climber.MAX_SPEED_KEY)
 
         if self._config.getboolean(Climber.GENERAL_SECTION, Climber.ENABLED_KEY):
-            self._motor = PWMTalonSRX(
-                self._config.getint(Climber.GENERAL_SECTION, Climber.CHANNEL_KEY)
-            )
-            self._motor.setInverted(
-                self._config.getboolean(Climber.GENERAL_SECTION, Climber.INVERTED_KEY)
-            )
+            self._motor = PWMTalonSRX(self._config.getint(Climber.GENERAL_SECTION, Climber.CHANNEL_KEY))
+            self._motor.setInverted(self._config.getboolean(Climber.GENERAL_SECTION, Climber.INVERTED_KEY))
+
+        if self._config.getboolean(Climber.CLIMBER_LIMITS_SECTION, Climber.ENABLED_KEY):
+            self._pot_channel = self._config.getint(Climber.CLIMBER_LIMITS_SECTION, Climber.CHANNEL_KEY)
+            self._pot_full_range = self._config.getint(Climber.CLIMBER_LIMITS_SECTION, Climber.FULL_RANGE_KEY)
+            self._pot_retracted_threshold = self._config \
+                .getfloat(Climber.CLIMBER_LIMITS_SECTION, Climber.RETRACTED_THRESHOLD_KEY)
+            self._pot_extended_threshold = self._config \
+                .getfloat(Climber.CLIMBER_LIMITS_SECTION, Climber.EXTENDED_THRESHOLD_KEY)
+            self._pot_limiter = AnalogPotentiometer(self._pot_channel, self._pot_full_range, 0.0)
 
     def is_retracted(self) -> bool:
-        return self._limit_switch_inverted ^ self._limit_value()
+        return self.potentiometer().get() < self._pot_retracted_threshold
 
-    def _limit_value(self) -> bool:
-        if self._limit_switch is not None:
-            return self._limit_switch.get()
-        else:
-            return False
+    def is_extended(self) -> bool:
+        return self.potentiometer().get() > self._pot_extended_threshold
 
     def _update_smartdashboard_sensors(self, speed: float = 0.0):
         SmartDashboard.putNumber("Winch Speed", speed)
-        if self._limit_switch is not None:
-            SmartDashboard.putBoolean("Winch Retracted", self.is_retracted())
-            SmartDashboard.putBoolean("Winch Limit Switch State", self._limit_value())
+        if self._pot_limiter is not None:
+            SmartDashboard.putBoolean("Winch Potentiometer Position", self.potentiometer().get())
 
     def move_winch(self, speed: float):
         adjusted_speed = 0.0
         if self._motor:
-            if speed < 0.0:
+            if speed < 0.0 and not self.is_retracted():
                 adjusted_speed = speed * self._max_speed
-            elif speed > 0.0 and not self.is_retracted():
+            elif speed > 0.0 and not self.is_extended():
                 adjusted_speed = speed * self._max_speed
             else:
                 adjusted_speed = 0.0
             self._motor.set(adjusted_speed)
         self._update_smartdashboard_sensors(adjusted_speed)
 
-    def potentiometer_raw(self) -> float:
-        return 0.0
+    def potentiometer(self) -> AnalogPotentiometer:
+        return self._pot_limiter
