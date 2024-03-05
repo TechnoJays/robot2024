@@ -1,6 +1,5 @@
 import configparser
 import logging
-from typing import Optional
 
 from commands2 import Subsystem
 from wpilib import PWMMotorController, PWMVictorSPX, SmartDashboard
@@ -21,7 +20,6 @@ class Shooter(Subsystem):
 
     _motor: PWMMotorController = None
     _max_speed: float = 0.0
-    _modifier_scaling: Optional[float] = None
 
     def __init__(self, config: configparser.ConfigParser):
         super().__init__()
