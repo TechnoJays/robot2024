@@ -35,7 +35,7 @@ class RetrojaysRobot(TimedCommandRobot):
         pass
 
     def disabledPeriodic(self):
-        # print("Robot Code Disabled Periodic Loop")
+        #logging.debug("Robot Code in disabled periodic loop")
         pass
 
     def disabledExit(self):
@@ -50,6 +50,7 @@ class RetrojaysRobot(TimedCommandRobot):
         This function also checks if the robot is currently running as a simulation
         """
         if self.isSimulation():
+            logging.info("### RUNNING AS SIMULATION ###")
             self._robot_controller = RobotController(self.SIM_SUBSYSTEMS_CONFIG_PATH,
                                                      self.SIM_JOYSTICK_CONFIG_PATH,
                                                      self.SIM_AUTONOMOUS_CONFIG_PATH)
