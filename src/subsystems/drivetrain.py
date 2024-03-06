@@ -6,7 +6,7 @@ from typing import Optional
 
 from commands2 import Subsystem
 from wpilib import ADXRS450_Gyro, MotorControllerGroup, PWMSparkMax, PWMTalonSRX
-from wpilib import PWMMotorController, PWMVictorSPX
+from wpilib import PWMMotorController
 from wpilib import SmartDashboard
 from wpilib.drive import DifferentialDrive
 from wpimath.filter import SlewRateLimiter

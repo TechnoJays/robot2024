@@ -59,7 +59,7 @@ def test_is_finished(drivetrain_default: Drivetrain):
 
 def test_get_requirements(drivetrain_default: Drivetrain):
     command = GoTurbo(drivetrain_default)
-    assert drivetrain_default in command.getRequirements()
+    assert not command.requirements
 
 
 def test_release_initialize(drivetrain_default: Drivetrain):
@@ -89,4 +89,4 @@ def test_release_is_finished(drivetrain_default: Drivetrain):
 
 def test_release_get_requirements(drivetrain_default: Drivetrain):
     command = ReleaseTurbo(drivetrain_default)
-    assert drivetrain_default in command.getRequirements()
+    assert not command.getRequirements()

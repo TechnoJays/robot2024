@@ -171,24 +171,26 @@ def test_drivetrain_zero_speed(
     dt = Drivetrain(config_zero_speed)
 
     # then: the drivetrain should be valid, and there should be motors
-    assert dt is not None
-    assert dt.left_motor is not None
-    assert dt.right_motor is not None
-    assert dt.robot_drive is not None
+    assert isinstance(dt, Drivetrain)
+    assert isinstance(dt.left_motor, MotorControllerGroup)
+    assert isinstance(dt.right_motor, MotorControllerGroup)
+    assert isinstance(dt.robot_drive, DifferentialDrive)
     assert dt.max_speed == 0.0
 
     # and: the robot drive motors are real
-    left_m1 = PWMSim(dt.left_motor.getChannel())
-    left_m2 = PWMSim(dt.left_motor.getChannel())
-    right_m1 = PWMSim(dt.right_motor.getChannel())
-    right_m2 = PWMSim(dt.right_motor.getChannel())
+    left_m1 = PWMSim(dt._left_motor1.getChannel())
+    left_m2 = PWMSim(dt._left_motor2.getChannel())
+    right_m1 = PWMSim(dt._right_motor1.getChannel())
+    right_m2 = PWMSim(dt._right_motor2.getChannel())
 
     # and: the drivetrain is "tank drive" at the left and right speed
     dt.tank_drive(left_speed, right_speed)
 
     # the speed of the left and right motor should be as set
     pytest.approx(left_ex_speed, left_m1.getSpeed())
+    pytest.approx(left_ex_speed, left_m2.getSpeed())
     pytest.approx(right_ex_speed, right_m1.getSpeed())
+    pytest.approx(right_ex_speed, right_m2.getSpeed())
 
 
 @pytest.mark.parametrize(
@@ -212,22 +214,26 @@ def test_drivetrain_half_speed(
     dt = Drivetrain(config_half_speed)
 
     # then: the drivetrain should have a left and right motor with a max speed of 0.5
-    assert dt is not None
-    assert dt.left_motor is not None
-    assert dt.right_motor is not None
-    assert dt.robot_drive is not None
+    assert isinstance(dt, Drivetrain)
+    assert isinstance(dt.left_motor, MotorControllerGroup)
+    assert isinstance(dt.right_motor, MotorControllerGroup)
+    assert isinstance(dt.robot_drive, DifferentialDrive)
     assert dt.max_speed == 0.5
 
     # and: the robot drive motors are real
-    left_m = PWMSim(dt.left_motor.getChannel())
-    right_m = PWMSim(dt.right_motor.getChannel())
+    left_m1 = PWMSim(dt._left_motor1.getChannel())
+    left_m2 = PWMSim(dt._left_motor2.getChannel())
+    right_m1 = PWMSim(dt._right_motor1.getChannel())
+    right_m2 = PWMSim(dt._right_motor2.getChannel())
 
     # and the drivetrain is "tank drive" at the left right
     dt.tank_drive(left_speed, right_speed)
 
     # the speed of the left and right motor should be less than it was
-    assert abs(left_m.getSpeed()) - abs(left_ex_speed) < 0.05
-    assert abs(right_m.getSpeed()) - abs(right_ex_speed) < 0.05
+    assert abs(left_m1.getSpeed()) - abs(left_ex_speed) < 0.05
+    assert abs(left_m2.getSpeed()) - abs(left_ex_speed) < 0.05
+    assert abs(right_m1.getSpeed()) - abs(right_ex_speed) < 0.05
+    assert abs(right_m2.getSpeed()) - abs(right_ex_speed) < 0.05
 
 
 @pytest.mark.parametrize(
@@ -251,22 +257,26 @@ def test_drivetrain_3_4_speed(
     dt = Drivetrain(config_3_4_speed)
 
     # then: the drivetrain should have a left and right motor and 3/4 max speed
-    assert dt is not None
-    assert dt.left_motor is not None
-    assert dt.right_motor is not None
-    assert dt.robot_drive is not None
+    assert isinstance(dt, Drivetrain)
+    assert isinstance(dt.left_motor, MotorControllerGroup)
+    assert isinstance(dt.right_motor, MotorControllerGroup)
+    assert isinstance(dt.robot_drive, DifferentialDrive)
     assert dt.max_speed == 0.75
 
     # and: the robot drive motors are real
-    left_m = PWMSim(dt._left_motor1.getChannel())
-    right_m = PWMSim(dt._right_motor1.getChannel())
+    left_m1 = PWMSim(dt._left_motor1.getChannel())
+    left_m2 = PWMSim(dt._left_motor2.getChannel())
+    right_m1 = PWMSim(dt._right_motor1.getChannel())
+    right_m2 = PWMSim(dt._right_motor2.getChannel())
 
     # and the drivetrain is "tank drive" at the left right
     dt.tank_drive(left_speed, right_speed)
 
     # then: the speed of the left and right motor should be less than 0.5
-    assert abs(left_m.getSpeed()) - abs(left_ex_speed) < 0.05
-    assert abs(right_m.getSpeed()) - abs(right_ex_speed) < 0.05
+    assert abs(left_m1.getSpeed()) - abs(left_ex_speed) < 0.05
+    assert abs(left_m2.getSpeed()) - abs(left_ex_speed) < 0.05
+    assert abs(right_m1.getSpeed()) - abs(right_ex_speed) < 0.05
+    assert abs(right_m2.getSpeed()) - abs(right_ex_speed) < 0.05
 
 
 @pytest.mark.parametrize(
@@ -290,63 +300,101 @@ def test_drivetrain_full_speed(
     dt = Drivetrain(config_full_speed)
 
     # then: the drivetrain should have a left and right motor at full speed
-    assert dt is not None
-    assert dt.left_motor is not None
-    assert dt.right_motor is not None
-    assert dt.robot_drive is not None
+    assert isinstance(dt, Drivetrain)
+    assert isinstance(dt.left_motor, MotorControllerGroup)
+    assert isinstance(dt.right_motor, MotorControllerGroup)
+    assert isinstance(dt.robot_drive, DifferentialDrive)
     assert dt.max_speed == 1.0
 
     # and: the robot drive motors are real
-    left_m = PWMSim(dt._left_motor1.getChannel())
-    right_m = PWMSim(dt._right_motor1.getChannel())
+    left_m1 = PWMSim(dt._left_motor1.getChannel())
+    left_m2 = PWMSim(dt._left_motor2.getChannel())
+    right_m1 = PWMSim(dt._right_motor1.getChannel())
+    right_m2 = PWMSim(dt._right_motor2.getChannel())
 
     # and the drivetrain is "tank drive" at the left right
     dt.tank_drive(left_speed, right_speed)
 
     # then the speed of the left and the right motor should be the speed
-    pytest.approx(left_ex_speed, left_m.getSpeed())
-    pytest.approx(right_ex_speed, right_m.getSpeed())
+    pytest.approx(left_ex_speed, left_m1.getSpeed())
+    pytest.approx(left_ex_speed, left_m2.getSpeed())
+    pytest.approx(right_ex_speed, right_m1.getSpeed())
+    pytest.approx(right_ex_speed, right_m2.getSpeed())
 
 
 def test_drivetrain_left_inverted(config_left_inverted: ConfigParser):
     dt = Drivetrain(config_left_inverted)
-    assert dt is not None
-    assert dt.left_motor is not None
-    assert dt.right_motor is not None
-    assert dt.robot_drive is not None
+    assert isinstance(dt, Drivetrain)
+    assert isinstance(dt.left_motor, MotorControllerGroup)
+    assert isinstance(dt.right_motor, MotorControllerGroup)
+    assert isinstance(dt.robot_drive, DifferentialDrive)
 
-    left_m = PWMSim(dt._left_motor1.getChannel())
-    right_m = PWMSim(dt._right_motor1.getChannel())
+    left_m1 = PWMSim(dt._left_motor1.getChannel())
+    left_m2 = PWMSim(dt._left_motor2.getChannel())
+    right_m1 = PWMSim(dt._right_motor1.getChannel())
+    right_m2 = PWMSim(dt._right_motor2.getChannel())
 
-    assert left_m.getInitialized() is True
-    assert left_m.getSpeed() == 0.0
-    assert left_m.getZeroLatch() is False
-    assert right_m.getInitialized() is True
-    assert right_m.getSpeed() == 0.0
-    assert right_m.getZeroLatch() is False
+    assert left_m1.getInitialized() is True
+    assert left_m1.getSpeed() == 0.0
+    assert left_m1.getZeroLatch() is False
+
+    assert left_m2.getInitialized() is True
+    assert left_m2.getSpeed() == 0.0
+    assert left_m2.getZeroLatch() is False
+
+    assert right_m1.getInitialized() is True
+    assert right_m1.getSpeed() == 0.0
+    assert right_m1.getZeroLatch() is False
+
+    assert right_m2.getInitialized() is True
+    assert right_m2.getSpeed() == 0.0
+    assert right_m2.getZeroLatch() is False
+
     assert dt._left_motor1.getInverted() is True
+    assert dt._left_motor2.getInverted() is True
+    # TODO manage motor group inversion versus motor inversion
+    # assert dt.left_motor.getInverted() is True
     assert dt._right_motor1.getInverted() is False
+    assert dt._right_motor2.getInverted() is False
+    assert dt.right_motor.getInverted() is False
 
 
 def test_drivetrain_right_inverted(config_right_inverted: ConfigParser):
     dt = Drivetrain(config_right_inverted)
-    assert dt is not None
-    assert dt.left_motor is not None
-    assert dt.right_motor is not None
-    assert dt.robot_drive is not None
+    assert isinstance(dt, Drivetrain)
+    assert isinstance(dt.left_motor, MotorControllerGroup)
+    assert isinstance(dt.right_motor, MotorControllerGroup)
+    assert isinstance(dt.robot_drive, DifferentialDrive)
 
-    left_m = PWMSim(dt._left_motor1.getChannel())
-    right_m = PWMSim(dt._right_motor1.getChannel())
+    left_m1 = PWMSim(dt._left_motor1.getChannel())
+    left_m2 = PWMSim(dt._left_motor2.getChannel())
+    right_m1 = PWMSim(dt._right_motor1.getChannel())
+    right_m2 = PWMSim(dt._right_motor2.getChannel())
 
-    assert left_m.getInitialized() is True
-    assert left_m.getSpeed() == 0.0
-    assert left_m.getZeroLatch() is False
-    assert right_m.getInitialized() is True
-    assert right_m.getSpeed() == 0.0
-    assert right_m.getZeroLatch() is False
+    assert left_m1.getInitialized() is True
+    assert left_m1.getSpeed() == 0.0
+    assert left_m1.getZeroLatch() is False
 
+    assert left_m2.getInitialized() is True
+    assert left_m2.getSpeed() == 0.0
+    assert left_m2.getZeroLatch() is False
+
+    assert right_m1.getInitialized() is True
+    assert right_m1.getSpeed() == 0.0
+    assert right_m1.getZeroLatch() is False
+
+    assert right_m2.getInitialized() is True
+    assert right_m2.getSpeed() == 0.0
+    assert right_m2.getZeroLatch() is False
+
+    assert dt._left_motor1.getInverted() is False
+    assert dt._left_motor2.getInverted() is False
     assert dt.left_motor.getInverted() is False
-    assert dt.right_motor.getInverted() is True
+
+    assert dt._right_motor1.getInverted() is True
+    assert dt._right_motor2.getInverted() is True
+    # TODO manage motor group inversion versus motor inversion
+    # assert dt.right_motor.getInverted() is True
 
 
 @pytest.mark.skip(reason="how to check disabled")
