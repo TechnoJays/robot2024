@@ -9,8 +9,9 @@ import wpilib
 from commands2 import Subsystem, SequentialCommandGroup
 from wpilib import SmartDashboard, SendableChooser
 
-from commands.autonomous_drive_commands import MoveFromLine
+from autonomous.autonomous_drive_commands import MoveFromLine
 from commands.climber_commands import DoNothingClimber
+from commands.do_nothing import DoNothing
 from commands.shooter_commands import DoNothingShooter, RaiseShooter, LowerShooter, ShooterDrive
 from commands.tank_drive_commands import TankDrive, GoTurbo, ReleaseTurbo, GoSlow, ReleaseSlow
 from commands.vacuum_commands import Vac, VacuumDrive, DoNothingVacuum
@@ -39,6 +40,7 @@ class RobotController:
                  ) -> None:
         self._init_config(subsystems_config, joystick_config, auto_config)
         self._subsystems = self._init_subsystems()
+        self._setup_autonomous_smartdashboard()
 
     def _init_config(self,
                      subsystems_config_path: str,
@@ -103,11 +105,11 @@ class RobotController:
         # set up the default drive command to be tank drive
         self.drivetrain.setDefaultCommand(TankDrive(self.oi, self.drivetrain))
 
-        # set up the default vacuum command to be do nothing
+        # set up the default vacuum command to do nothing
         self.vacuum.setDefaultCommand(DoNothingVacuum(self.vacuum, self.oi))
-        # set up the default climber command to be do nothing
+        # set up the default climber command to do nothing
         self.climber.setDefaultCommand(DoNothingClimber(self.climber, self.oi))
-        # set up the default shooter command to be do nothing
+        # set up the default shooter command to do nothing
         self.shooter.setDefaultCommand(DoNothingShooter(self.shooter))
 
         self.oi.driver_controller.rightBumper().onTrue(GoTurbo(self.drivetrain))
@@ -128,18 +130,18 @@ class RobotController:
     def get_auto_choice(self) -> SequentialCommandGroup:
         return self._oi.get_auto_choice()
 
-    def _setup_autonomous_smartdashboard(self,
-                                         drivetrain: Drivetrain,
-                                         autonomous_config: configparser.ConfigParser) -> SendableChooser:
+    def _setup_autonomous_smartdashboard(self) -> SendableChooser:
         self._auto_program_chooser = SendableChooser()
-        self._auto_program_chooser.setDefaultOption(
-            "Move From Line", MoveFromLine(drivetrain, autonomous_config)
-        )
-        SmartDashboard.putData("Autonomous", self._auto_program_chooser)
+        self._auto_program_chooser.addOption("Move_From_Line",
+                                             MoveFromLine(self._drivetrain, self._autonomous_config))
+        self._auto_program_chooser.setDefaultOption("Do_Nothing", DoNothing(self._drivetrain))
+        SmartDashboard.putData(self._auto_program_chooser)
         return self._auto_program_chooser
 
     def update_sensors(self) -> None:
-        SmartDashboard.putNumber("Climber-POT-RAW", self._climber.potentiometer_raw())
+        SmartDashboard.putNumber("Climber-POT-Value-Degrees", self._climber.potentiometer().get())
+        SmartDashboard.putNumber("Climber-POT-Degrees-Range", self._climber.pot_range())
+        SmartDashboard.putNumber("Climber-POT-Degrees-Offset", self._climber.potentiometer().get())
 
     @property
     def drivetrain(self) -> Drivetrain:

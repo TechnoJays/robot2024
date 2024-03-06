@@ -2,7 +2,7 @@ from configparser import ConfigParser
 
 import pytest
 
-from commands.autonomous_drive_commands import MoveFromLine
+from autonomous.autonomous_drive_commands import MoveFromLine
 from oi import OI
 from subsystems.drivetrain import Drivetrain
 

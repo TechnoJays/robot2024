@@ -14,6 +14,7 @@ class Climber(Subsystem):
     CHANNEL_KEY = "CHANNEL"
     INVERTED_KEY = "INVERTED"
     FULL_RANGE_KEY = "FULL_RANGE"
+    OFFSET_RANGE_KEY = "OFFSET"
     EXTENDED_THRESHOLD_KEY = "EXTENDED_THRESHOLD"
     RETRACTED_THRESHOLD_KEY = "RETRACTED_THRESHOLD"
 
@@ -34,11 +35,12 @@ class Climber(Subsystem):
         if self._config.getboolean(Climber.CLIMBER_LIMITS_SECTION, Climber.ENABLED_KEY):
             self._pot_channel = self._config.getint(Climber.CLIMBER_LIMITS_SECTION, Climber.CHANNEL_KEY)
             self._pot_full_range = self._config.getint(Climber.CLIMBER_LIMITS_SECTION, Climber.FULL_RANGE_KEY)
+            self._pot_offset = self._config.getint(Climber.CLIMBER_LIMITS_SECTION, Climber.OFFSET_RANGE_KEY)
             self._pot_retracted_threshold = self._config \
                 .getfloat(Climber.CLIMBER_LIMITS_SECTION, Climber.RETRACTED_THRESHOLD_KEY)
             self._pot_extended_threshold = self._config \
                 .getfloat(Climber.CLIMBER_LIMITS_SECTION, Climber.EXTENDED_THRESHOLD_KEY)
-            self._pot_limiter = AnalogPotentiometer(self._pot_channel, self._pot_full_range, 0.0)
+            self._pot_limiter = AnalogPotentiometer(self._pot_channel, self._pot_full_range, self._pot_offset)
 
     def is_retracted(self) -> bool:
         return self.potentiometer().get() < self._pot_retracted_threshold
@@ -60,8 +62,18 @@ class Climber(Subsystem):
                 adjusted_speed = speed * self._max_speed
             else:
                 adjusted_speed = 0.0
-            self._motor.set(adjusted_speed)
+            if self.is_climber_between_limits():
+                self._motor.set(adjusted_speed)
         self._update_smartdashboard_sensors(adjusted_speed)
 
     def potentiometer(self) -> AnalogPotentiometer:
         return self._pot_limiter
+
+    def pot_range(self) -> float:
+        return self._pot_full_range
+
+    def pot_offset(self) -> float:
+        return self._pot_offset
+
+    def is_climber_between_limits(self):
+        return self._pot_retracted_threshold < self._pot_limiter.get() < self._pot_extended_threshold
