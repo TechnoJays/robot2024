@@ -30,7 +30,7 @@ class Vac(Command):
         """Returns true when the Command no longer needs to be run"""
         return True
 
-    def end(self, **kwargs):
+    def end(self, interrupted: bool):
         """Called once after isFinished returns true"""
         self._vacuum.move(0.0)
 
