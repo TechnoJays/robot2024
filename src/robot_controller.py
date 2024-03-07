@@ -72,23 +72,23 @@ class RobotController:
 
         self._oi = OI(self._joystick_config)
         subsystems.append(self._oi)
-        logging.info("Setup Operator Interface Subsystem")
+        logging.info("Operator Interface Subsystem Completed Setup")
 
         self._drivetrain = Drivetrain(self._subsystems_config)
         subsystems.append(self._drivetrain)
-        logging.info("Setup Drivetrain Subsystem")
+        logging.info("Drivetrain Subsystem Completed Setup")
 
         self._vacuum = Vacuum(self._subsystems_config)
         subsystems.append(self._vacuum)
-        logging.info("Setup Vacuum Subsystem")
+        logging.info("Feeder(Vacuum) Subsystem Completed Setup")
 
         self._shooter = Shooter(self._subsystems_config)
         subsystems.append(self._shooter)
-        logging.info("Setup Shooter Subsystem")
+        logging.info("Conveyor(Shooter) Subsystem Completed Setup")
 
         self._climber = Climber(self._subsystems_config)
         subsystems.append(self._climber)
-        logging.info("Setup Climber Subsystem")
+        logging.info("Winch(Climber) Subsystem Completed Setup")
 
         # wpilib.CameraServer.launch(vision_py='vision/vision.py:start_camera')
         return subsystems
