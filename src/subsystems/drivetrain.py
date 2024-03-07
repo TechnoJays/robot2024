@@ -1,6 +1,7 @@
 # Copyright (c) Southfield High School Team 94
 # Open Source Software; you can modify and / or share it under the terms of
 # the MIT license file in the root directory of this project
+import logging
 from configparser import ConfigParser
 from typing import Optional
 
@@ -83,8 +84,10 @@ class Drivetrain(Subsystem):
     def _init_motor(self, config_section: str) -> PWMMotorController:
         if self._config.get(config_section, Drivetrain.TYPE_KEY) == "SPARKMAX":
             motor = PWMSparkMax(self._config.getint(config_section, Drivetrain.CHANNEL_KEY))
+            logging.info(f"{config_section} motor initialized as PWMSparkMax")
         else:
             motor = PWMTalonSRX(self._config.getint(config_section, Drivetrain.CHANNEL_KEY))
+            logging.info(f"{config_section} motor initialized as PWMTalonSRX")
 
         motor.setInverted(self._config.getboolean(config_section, Drivetrain.INVERTED_KEY))
         if not self._config.getboolean(config_section, Drivetrain.ENABLED_KEY):
