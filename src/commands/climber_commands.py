@@ -69,6 +69,8 @@ class ClimberDrive(Command):
     def execute(self):
         """Called repeatedly when this Command is scheduled to run"""
         speed = self._oi.scoring_controller.getLeftY()
+        if abs(speed) < 0.2:
+            speed = 0.0
         self._climber.move_winch(speed)
         return Command.execute(self)
 
