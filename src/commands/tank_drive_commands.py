@@ -50,7 +50,12 @@ class TankDrive(Command):
             modifier = self.drivetrain.turbo_scaling
 
         left_track: float = self._oi.driver_controller.getLeftY()
+        if (abs(left_track) < 0.2):
+            left_track = 0.0
         right_track: float = self._oi.driver_controller.getRightY()
+        if(abs(right_track) < 0.2):
+            right_track = 0.0
+
         self.drivetrain.tank_drive(left_track * modifier, right_track * modifier)
 
     def isFinished(self) -> bool:
