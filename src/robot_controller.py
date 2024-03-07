@@ -90,7 +90,7 @@ class RobotController:
         subsystems.append(self._climber)
         logging.info("Setup Climber Subsystem")
 
-        wpilib.CameraServer.launch(vision_py='vision/vision.py:start_camera')
+        # wpilib.CameraServer.launch(vision_py='vision/vision.py:start_camera')
         return subsystems
 
     def mappings(self) -> None:
