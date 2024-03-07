@@ -94,13 +94,6 @@ class Drivetrain(Subsystem):
             motor.disable()
         return motor
 
-    def reset_gyro_angle(self) -> float:
-        if self._gyro:
-            self._gyro.reset()
-            self._gyro_angle = self._gyro.getAngle()
-        self._update_smartdashboard_sensors(self._gyro_angle)
-        return self._gyro_angle
-
     def is_gyro_enabled(self) -> bool:
         return self._gyro is not None
 
