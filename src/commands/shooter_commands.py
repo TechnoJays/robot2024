@@ -83,6 +83,13 @@ class DoNothingShooter(Command):
         """Returns true when the Command no longer needs to be run"""
         return False
 
+    def end(self, interrupted: bool):
+        return self._shooter.move(0.0)
+
+    def interrupted(self):
+        """Called when another command which requires one or more of the same subsystems is scheduled to run"""
+        self.end(interrupted=True)
+
     def getRequirements(self) -> typing.Set[Subsystem]:
         return {self._shooter}
 
