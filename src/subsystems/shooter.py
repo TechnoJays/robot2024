@@ -16,11 +16,6 @@ class Shooter(Subsystem):
     MAX_SPEED_KEY = "MAX_SPEED"
     MODIFIER_SCALING_KEY = "MODIFIER_SCALING"
 
-    _enabled: bool = False
-
-    _motor: PWMMotorController = None
-    _max_speed: float = 0.0
-
     def __init__(self, config: configparser.ConfigParser):
         super().__init__()
         self._config = config
@@ -38,7 +33,7 @@ class Shooter(Subsystem):
             Shooter.GENERAL_SECTION, Shooter.MAX_SPEED_KEY
         )
         if self._enabled:
-            logging.debug("Shooter enabled")
+            logging.info("Conveyor enabled")
             self._motor = PWMTalonSRX(
                 self._config.getint(Shooter.GENERAL_SECTION, Shooter.CHANNEL_KEY)
             )
@@ -47,9 +42,8 @@ class Shooter(Subsystem):
             )
 
     def move(self, speed: float):
-        adjusted_speed = 0.0
+        adjusted_speed = speed * self._max_speed
         if self._motor:
-            adjusted_speed = speed * self._max_speed
             self._motor.set(adjusted_speed)
         Shooter._update_smartdashboard(adjusted_speed)
 

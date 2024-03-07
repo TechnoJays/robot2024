@@ -51,7 +51,7 @@ class Climber(Subsystem):
     def _update_smartdashboard_sensors(self, speed: float = 0.0):
         SmartDashboard.putNumber("Winch Speed", speed)
         if self._pot_limiter is not None:
-            SmartDashboard.putBoolean("Winch Potentiometer Position", self.potentiometer().get())
+            SmartDashboard.putNumber("Winch Potentiometer Position", self.potentiometer().get())
 
     def move_winch(self, speed: float):
         adjusted_speed = 0.0

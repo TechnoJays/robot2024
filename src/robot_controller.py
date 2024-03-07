@@ -10,7 +10,7 @@ from commands2 import Subsystem, SequentialCommandGroup
 from wpilib import SmartDashboard, SendableChooser
 
 from autonomous.autonomous_drive_commands import MoveFromLine
-from commands.climber_commands import DoNothingClimber
+from commands.climber_commands import ClimberDrive, DoNothingClimber
 from commands.do_nothing import DoNothing
 from commands.shooter_commands import DoNothingShooter, RaiseShooter, LowerShooter, ShooterDrive
 from commands.tank_drive_commands import TankDrive, GoTurbo, ReleaseTurbo, GoSlow, ReleaseSlow
@@ -117,15 +117,19 @@ class RobotController:
         self.oi.driver_controller.leftBumper().onTrue(GoSlow(self.drivetrain))
         self.oi.driver_controller.leftBumper().onFalse(ReleaseSlow(self.drivetrain))
 
-        # set up the right bumper of the scoring controller to trigger the grabber to release
+        # set up the right bumper of the scoring controller to trigger the vacuum to spit
         self.oi.scoring_controller.rightBumper().whileTrue(Vac(self.vacuum, self.oi, 1.0))
+        # set up the left bumper of the scoring controller to trigger the vacuum to suck
         self.oi.scoring_controller.leftBumper().whileTrue(Vac(self.vacuum, self.oi, -1.0))
+
         self.oi.scoring_controller.rightTrigger().whileTrue(VacuumDrive(self.vacuum, self.oi, 1.0))
         self.oi.scoring_controller.leftTrigger().whileTrue(VacuumDrive(self.vacuum, self.oi, -1.0))
 
         self.oi.scoring_controller.y().whileTrue(RaiseShooter(self.shooter, self.oi))
         self.oi.scoring_controller.a().whileTrue(LowerShooter(self.shooter, self.oi))
         self.oi.scoring_controller.rightStick().whileTrue(ShooterDrive(self.shooter, self.oi))
+
+        self.oi.scoring_controller.leftStick().whileTrue(ClimberDrive(self.climber, self.oi))
 
     def get_auto_choice(self) -> SequentialCommandGroup:
         return self._oi.get_auto_choice()
@@ -141,7 +145,7 @@ class RobotController:
     def update_sensors(self) -> None:
         SmartDashboard.putNumber("Climber-POT-Value-Degrees", self._climber.potentiometer().get())
         SmartDashboard.putNumber("Climber-POT-Degrees-Range", self._climber.pot_range())
-        SmartDashboard.putNumber("Climber-POT-Degrees-Offset", self._climber.potentiometer().get())
+        SmartDashboard.putNumber("Climber-POT-Degrees-Offset", self._climber.pot_offset())
 
     @property
     def drivetrain(self) -> Drivetrain:

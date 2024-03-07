@@ -28,7 +28,7 @@ class Vac(Command):
 
     def isFinished(self):
         """Returns true when the Command no longer needs to be run"""
-        return True
+        return False
 
     def end(self, interrupted: bool):
         """Called once after isFinished returns true"""
@@ -37,9 +37,6 @@ class Vac(Command):
     def interrupted(self):
         """Called when another command which requires one or more of the same subsystems is scheduled to run"""
         self.end()
-
-    def cancel(self) -> None:
-        super().cancel()
 
     def getRequirements(self) -> set[Subsystem]:
         return {self._vacuum}

@@ -55,6 +55,9 @@ class ShooterDrive(Command):
         speed = self._oi.scoring_controller.getRightY()
         self._shooter.move(speed)
 
+    def end(self, interrupted: bool):
+        return self._shooter.move(0.0)
+
     def isFinished(self):
         """Returns true when the Command no longer needs to be run"""
         return False

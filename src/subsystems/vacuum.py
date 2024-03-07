@@ -44,5 +44,5 @@ class Vacuum(Subsystem):
         Vacuum._update_smartdashboard(adjusted_speed)
 
     @staticmethod
-    def _update_smartdashboard(speed: float = 0.0):
+    def _update_smartdashboard(speed: float):
         SmartDashboard.putNumber("Vacuum Speed", speed)
