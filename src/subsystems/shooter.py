@@ -2,7 +2,7 @@ import configparser
 import logging
 
 from commands2 import Subsystem
-from wpilib import PWMMotorController, PWMVictorSPX, SmartDashboard, PWMTalonSRX
+from wpilib import SmartDashboard, PWMSparkMax
 
 
 class Shooter(Subsystem):
@@ -25,21 +25,13 @@ class Shooter(Subsystem):
         Shooter._update_smartdashboard(0.0)
 
     def _init_components(self):
-        self._enabled = self._config.getboolean(
-            Shooter.GENERAL_SECTION, Shooter.ENABLED_KEY
-        )
+        self._enabled = self._config.getboolean(Shooter.GENERAL_SECTION, Shooter.ENABLED_KEY)
+        self._max_speed = self._config.getfloat(Shooter.GENERAL_SECTION, Shooter.MAX_SPEED_KEY)
 
-        self._max_speed = self._config.getfloat(
-            Shooter.GENERAL_SECTION, Shooter.MAX_SPEED_KEY
-        )
         if self._enabled:
             logging.info("Conveyor enabled")
-            self._motor = PWMTalonSRX(
-                self._config.getint(Shooter.GENERAL_SECTION, Shooter.CHANNEL_KEY)
-            )
-            self._motor.setInverted(
-                self._config.getboolean(Shooter.GENERAL_SECTION, Shooter.INVERTED_KEY)
-            )
+            self._motor = PWMSparkMax(self._config.getint(Shooter.GENERAL_SECTION, Shooter.CHANNEL_KEY))
+            self._motor.setInverted(self._config.getboolean(Shooter.GENERAL_SECTION, Shooter.INVERTED_KEY))
 
     def move(self, speed: float):
         adjusted_speed = speed * self._max_speed
