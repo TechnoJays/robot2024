@@ -43,10 +43,10 @@ class Climber(Subsystem):
             self._pot_limiter = AnalogPotentiometer(self._pot_channel, self._pot_full_range, self._pot_offset)
 
     def is_retracted(self) -> bool:
-        return self.potentiometer().get() > self._pot_retracted_threshold
+        return self.potentiometer().get() <= self._pot_retracted_threshold
 
     def is_extended(self) -> bool:
-        return self.potentiometer().get() < self._pot_extended_threshold
+        return self.potentiometer().get() >= self._pot_extended_threshold
 
     def _update_smartdashboard_sensors(self, speed: float = 0.0):
         SmartDashboard.putNumber("Winch Speed", speed)
