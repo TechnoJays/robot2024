@@ -18,9 +18,10 @@ class RetrojaysRobot(TimedCommandRobot):
     def autonomousInit(self):
         # Schedule the autonomous command
         # TODO move into robot controller for better mgmt?
-        autonomous_command_group = self._robot_controller.get_auto_choice()
-        if autonomous_command_group:
-            autonomous_command_group.schedule()
+        self._autonomous_command_group = self._robot_controller.get_auto_choice()
+        logging.info(f"Chosen Auto Mode: {self._autonomous_command_group}")
+        if self._autonomous_command_group:
+            self._autonomous_command_group.schedule()
 
     def autonomousPeriodic(self):
         """
@@ -67,7 +68,8 @@ class RetrojaysRobot(TimedCommandRobot):
 
     def teleopInit(self):
         logging.debug("Robot Code Teleop Initialized")
-        pass
+        if self._autonomous_command_group:
+            self._autonomous_command_group.cancel()
 
     def teleopPeriodic(self):
         """

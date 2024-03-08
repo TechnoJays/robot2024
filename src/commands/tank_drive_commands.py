@@ -2,8 +2,10 @@
 # Open Source Software; you can modify and / or share it under the terms of
 # the MIT license file in the root directory of this project
 import typing
+from typing import Set
 
 from commands2 import Command, Subsystem
+from wpilib import Timer
 
 from oi import OI
 from subsystems.drivetrain import Drivetrain
@@ -11,11 +13,7 @@ from subsystems.drivetrain import Drivetrain
 
 class TankDrive(Command):
 
-    def __init__(
-            self,
-            oi: OI,
-            drivetrain: Drivetrain,
-    ):
+    def __init__(self, oi: OI,drivetrain: Drivetrain):
         """
         Constructor
 
@@ -188,3 +186,45 @@ class ReleaseSlow(Command):
 
     def turboUpdated(self) -> bool:
         return self._slow_updated
+
+
+class TankDriveTime(Command):
+
+    def __init__(self, drivetrain: Drivetrain, duration: float, speed: float):
+        super().__init__()
+        self._drivetrain = drivetrain
+        self._duration = duration
+        self._timer = Timer()
+        self._speed = speed
+
+    def initialize(self):
+        self._timer.start()
+
+    def execute(self):
+        self._drivetrain.tank_drive(self._speed, self._speed)
+
+    def isFinished(self) -> bool:
+        return self._timer.hasElapsed(self._duration)
+
+    def end(self, interrupted: bool):
+        self._timer.stop()
+        self._drivetrain.tank_drive(0.0, 0.0)
+
+    def getRequirements(self) -> Set[Subsystem]:
+        return {self._drivetrain}
+
+    @property
+    def drivetrain(self) -> Drivetrain:
+        return self._drivetrain
+
+    @property
+    def duration(self) -> float:
+        return self._duration
+
+    @property
+    def speed(self) -> float:
+        return self._speed
+
+    @property
+    def timer(self) -> Timer:
+        return self._timer
