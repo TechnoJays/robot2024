@@ -10,7 +10,7 @@ from commands2 import Subsystem, SequentialCommandGroup
 from wpilib import SmartDashboard, SendableChooser
 
 from autonomous.autonomous_drive_commands import MoveFromLine
-from commands.climber_commands import ClimberDrive, DoNothingClimber
+from commands.climber_commands import Climb, ClimberDrive, DoNothingClimber
 from commands.do_nothing import DoNothing
 from commands.shooter_commands import DoNothingShooter, RaiseShooter, LowerShooter, ShooterDrive
 from commands.tank_drive_commands import TankDrive, GoTurbo, ReleaseTurbo, GoSlow, ReleaseSlow
@@ -130,6 +130,9 @@ class RobotController:
         self.oi.scoring_controller.rightStick().whileTrue(ShooterDrive(self.shooter, self.oi))
 
         self.oi.scoring_controller.leftStick().whileTrue(ClimberDrive(self.climber, self.oi))
+        self.oi.scoring_controller.x().whileTrue(Climb(self.climber, self.oi, 0.5))
+        self.oi.scoring_controller.b().whileTrue(Climb(self.climber, self.oi, -0.5))
+
 
     def get_auto_choice(self) -> SequentialCommandGroup:
         return self._oi.get_auto_choice()
