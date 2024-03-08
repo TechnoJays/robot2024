@@ -36,7 +36,7 @@ class Vac(Command):
 
     def interrupted(self):
         """Called when another command which requires one or more of the same subsystems is scheduled to run"""
-        self.end()
+        self.end(interrupted=True)
 
     def getRequirements(self) -> set[Subsystem]:
         return {self._vacuum}
@@ -62,11 +62,21 @@ class VacuumDrive(Command):
     def execute(self):
         """Called repeatedly when this Command is scheduled to run"""
         speed = self._oi.scoring_controller.getRightTriggerAxis()
+        if (abs(speed) < 0.1):
+            speed = 0.0
         self._vacuum.move(speed * self._scaling)
 
     def isFinished(self):
         """Returns true when the Command no longer needs to be run"""
         return False
+
+    def end(self, interrupted: bool):
+        """Called once after isFinished returns true"""
+        self._vacuum.move(0.0)
+
+    def interrupted(self):
+        """Called when another command which requires one or more of the same subsystems is scheduled to run"""
+        self.end(interrupted=True)
 
     def getRequirements(self) -> set[Subsystem]:
         return {self._vacuum}
