@@ -16,8 +16,10 @@ from wpimath.filter import SlewRateLimiter
 class Drivetrain(Subsystem):
     # Config file section names
     GENERAL_SECTION = "DrivetrainGeneral"
+    LEFT_MOTORG_SECTION = "DrivetrainLeftMG"
     LEFT_MOTOR_SECTION1 = "DrivetrainLeftMotor1"
     LEFT_MOTOR_SECTION2 = "DrivetrainLeftMotor2"
+    RIGHT_MOTORG_SECTION = "DrivetrainRightMG"
     RIGHT_MOTOR_SECTION1 = "DrivetrainRightMotor1"
     RIGHT_MOTOR_SECTION2 = "DrivetrainRightMotor2"
     GYRO_SECTION = "DrivetrainGyro"
@@ -69,10 +71,16 @@ class Drivetrain(Subsystem):
         self._left_motor1 = self._init_motor(Drivetrain.LEFT_MOTOR_SECTION1)
         self._left_motor2 = self._init_motor(Drivetrain.LEFT_MOTOR_SECTION2)
         self._left_m = MotorControllerGroup(self._left_motor1, self._left_motor2)
+        self._left_m.setInverted(self._config.getboolean(Drivetrain.LEFT_MOTORG_SECTION, Drivetrain.INVERTED_KEY))
+        if not self._config.getboolean(Drivetrain.LEFT_MOTORG_SECTION, Drivetrain.ENABLED_KEY):
+            self._left_m.disable()
 
         self._right_motor1 = self._init_motor(Drivetrain.RIGHT_MOTOR_SECTION1)
         self._right_motor2 = self._init_motor(Drivetrain.RIGHT_MOTOR_SECTION2)
         self._right_m = MotorControllerGroup(self._right_motor1, self._right_motor2)
+        self._right_m.setInverted(self._config.getboolean(Drivetrain.RIGHT_MOTORG_SECTION, Drivetrain.INVERTED_KEY))
+        if not self._config.getboolean(Drivetrain.LEFT_MOTORG_SECTION, Drivetrain.ENABLED_KEY):
+            self._right_m.disable()
 
         if self._left_m and self._right_m:
             self._robot_drive = DifferentialDrive(self._left_m, self._right_m)
@@ -89,7 +97,7 @@ class Drivetrain(Subsystem):
             motor = PWMTalonSRX(self._config.getint(config_section, Drivetrain.CHANNEL_KEY))
             logging.info(f"{config_section} motor initialized as PWMTalonSRX")
 
-        motor.setInverted(self._config.getboolean(config_section, Drivetrain.INVERTED_KEY))
+        # motor.setInverted(self._config.getboolean(config_section, Drivetrain.INVERTED_KEY))
         if not self._config.getboolean(config_section, Drivetrain.ENABLED_KEY):
             motor.disable()
         return motor

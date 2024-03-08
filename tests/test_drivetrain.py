@@ -350,10 +350,9 @@ def test_drivetrain_left_inverted(config_left_inverted: ConfigParser):
     assert right_m2.getSpeed() == 0.0
     assert right_m2.getZeroLatch() is False
 
-    assert dt._left_motor1.getInverted() is True
-    assert dt._left_motor2.getInverted() is True
-    # TODO manage motor group inversion versus motor inversion
-    # assert dt.left_motor.getInverted() is True
+    assert dt._left_motor1.getInverted() is False
+    assert dt._left_motor2.getInverted() is False
+    assert dt.left_motor.getInverted() is True
     assert dt._right_motor1.getInverted() is False
     assert dt._right_motor2.getInverted() is False
     assert dt.right_motor.getInverted() is False
@@ -391,10 +390,10 @@ def test_drivetrain_right_inverted(config_right_inverted: ConfigParser):
     assert dt._left_motor2.getInverted() is False
     assert dt.left_motor.getInverted() is False
 
-    assert dt._right_motor1.getInverted() is True
-    assert dt._right_motor2.getInverted() is True
+    assert dt._right_motor1.getInverted() is False
+    assert dt._right_motor2.getInverted() is False
     # TODO manage motor group inversion versus motor inversion
-    # assert dt.right_motor.getInverted() is True
+    assert dt.right_motor.getInverted() is True
 
 
 @pytest.mark.skip(reason="how to check disabled")
