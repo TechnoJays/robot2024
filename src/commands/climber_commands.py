@@ -89,6 +89,41 @@ class ClimberDrive(Command):
     def getRequirements(self) -> set[Subsystem]:
         return {self._climber}
 
+class Climb(Command):
+
+    def __init__(self,
+            climber: Climber,
+            oi: OI,
+            speed: float
+    ):
+        super().__init__()
+        self._climber = climber
+        self._oi = oi
+        self._speed = speed
+
+    def initialize(self):
+        """Called before the Command is run for the first time."""
+        pass
+
+    def execute(self):
+        """Called repeatedly when this Command is scheduled to run"""
+        self._climber.move_winch(self._speed)
+
+    def isFinished(self):
+        """Returns true when the Command no longer needs to be run"""
+        return False
+
+    def end(self, interrupted: bool):
+        """Called once after isFinished returns true"""
+        self._climber.move_winch(0.0)
+
+    def interrupted(self):
+        """Called when another command which requires one or more of the same subsystems is scheduled to run"""
+        self.end(interrupted=True)
+
+    def getRequirements(self) -> set[Subsystem]:
+        return {self._climber}
+
 
 class DoNothingClimber(Command):
 
