@@ -38,6 +38,8 @@ class Climber(Subsystem):
             self._pot_offset = self._config.getint(Climber.CLIMBER_LIMITS_SECTION, Climber.OFFSET_RANGE_KEY)
             self._pot_retracted_threshold = self._config \
                 .getfloat(Climber.CLIMBER_LIMITS_SECTION, Climber.RETRACTED_THRESHOLD_KEY)
+            SmartDashboard.putNumber("Climber_POT Retract Threshold: ", self._pot_retracted_threshold)
+            SmartDashboard.putNumber("Climber_POT Extended Threshold: ", self._pot_extended_threshold)
             self._pot_extended_threshold = self._config \
                 .getfloat(Climber.CLIMBER_LIMITS_SECTION, Climber.EXTENDED_THRESHOLD_KEY)
             self._pot_limiter = AnalogPotentiometer(self._pot_channel, self._pot_full_range, self._pot_offset)
