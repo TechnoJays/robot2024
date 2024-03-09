@@ -56,6 +56,7 @@ class Climber(Subsystem):
             SmartDashboard.putNumber("Winch Potentiometer Position", self.potentiometer().get())
             SmartDashboard.putBoolean("Winch POT Retracted", self.is_retracted())
             SmartDashboard.putBoolean("Winch POT Extended", self.is_extended())
+            SmartDashboard.putNumber("Climber Motor RAW", self._motor.get())
 
     def move_winch(self, speed: float):
         adjusted_speed = 0.0
@@ -66,8 +67,8 @@ class Climber(Subsystem):
                 adjusted_speed = speed * self._max_speed
             else:
                 adjusted_speed = 0.0
-
             self._motor.set(adjusted_speed)
+
         self._update_smartdashboard_sensors(adjusted_speed)
 
     def potentiometer(self) -> AnalogPotentiometer:
