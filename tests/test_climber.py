@@ -25,8 +25,8 @@ def test__init_components(config_default: ConfigParser):
 
     assert climber._pot_channel == 2
     assert climber._pot_full_range == 3600
-    assert climber._pot_retracted_threshold == 400
-    assert climber._pot_extended_threshold == 3200
+    assert climber._pot_retracted_threshold == -1575
+    assert climber._pot_extended_threshold == 1530
     assert isinstance(climber._pot_limiter, AnalogPotentiometer)
 
 
