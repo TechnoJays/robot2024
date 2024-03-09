@@ -1,9 +1,10 @@
 import logging
 
 import wpilib
-from commands2 import CommandScheduler
+from commands2 import CommandScheduler, SequentialCommandGroup
 from commands2 import TimedCommandRobot
 
+from autonomous.autonomous_drive_commands import MoveFromLine
 from robot_controller import RobotController
 
 logging.basicConfig(level=logging.INFO)
@@ -14,11 +15,14 @@ class RetrojaysRobot(TimedCommandRobot):
     SIM_JOYSTICK_CONFIG_PATH = "configs/joysticks.ini"
     SIM_AUTONOMOUS_CONFIG_PATH = "configs/autonomous.ini"
     _robot_controller: RobotController = None
+    _autonomous_command_group: SequentialCommandGroup = None
 
     def autonomousInit(self):
         # Schedule the autonomous command
         # TODO move into robot controller for better mgmt?
-        self._autonomous_command_group = self._robot_controller.get_auto_choice()
+        # self._autonomous_command_group = self._robot_controller.get_auto_chooser().getSelected()
+        self._autonomous_command_group = MoveFromLine(self._robot_controller.drivetrain,
+                                                      self._robot_controller.autonomous_config)
         logging.info(f"Chosen Auto Mode: {self._autonomous_command_group}")
         if self._autonomous_command_group:
             self._autonomous_command_group.schedule()
@@ -36,7 +40,7 @@ class RetrojaysRobot(TimedCommandRobot):
         pass
 
     def disabledPeriodic(self):
-        #logging.debug("Robot Code in disabled periodic loop")
+        # logging.debug("Robot Code in disabled periodic loop")
         pass
 
     def disabledExit(self):
@@ -70,6 +74,7 @@ class RetrojaysRobot(TimedCommandRobot):
         logging.debug("Robot Code Teleop Initialized")
         if self._autonomous_command_group:
             self._autonomous_command_group.cancel()
+            logging.info("Cancelled Autonomous Command in Teleop")
 
     def teleopPeriodic(self):
         """

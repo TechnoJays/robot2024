@@ -5,7 +5,6 @@ import configparser
 import logging
 from configparser import ConfigParser
 
-import wpilib
 from commands2 import Subsystem, SequentialCommandGroup
 from wpilib import SmartDashboard, SendableChooser
 
@@ -133,17 +132,16 @@ class RobotController:
         self.oi.scoring_controller.x().whileTrue(Climb(self.climber, self.oi, 0.5))
         self.oi.scoring_controller.b().whileTrue(Climb(self.climber, self.oi, -0.5))
 
-
-    def get_auto_choice(self) -> SequentialCommandGroup:
-        return self._oi.get_auto_choice()
+    def get_auto_chooser(self) -> SendableChooser:
+        return self._oi.get_auto_chooser()
 
     def _setup_autonomous_smartdashboard(self) -> SendableChooser:
-        self._auto_program_chooser = SendableChooser()
-        self._auto_program_chooser.addOption("Move_From_Line",
-                                             MoveFromLine(self._drivetrain, self._autonomous_config))
-        self._auto_program_chooser.setDefaultOption("Do_Nothing", DoNothing(self._drivetrain))
-        SmartDashboard.putData(self._auto_program_chooser)
-        return self._auto_program_chooser
+        auto_chooser = self._oi.get_auto_chooser()
+        auto_chooser.setDefaultOption("Do_Nothing", DoNothing(self._drivetrain))
+        auto_chooser.addOption("Move_From_Line",
+                               MoveFromLine(self._drivetrain, self._autonomous_config))
+        SmartDashboard.putData(auto_chooser)
+        return auto_chooser
 
     def update_sensors(self) -> None:
         SmartDashboard.putNumber("Climber-POT-Value-Degrees", self._climber.potentiometer().get())

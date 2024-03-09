@@ -92,13 +92,13 @@ class OI(Subsystem):
         config_section = OI.JOY_CONFIG_SECTION + str(driver)
         return self._config.getfloat(config_section, OI.DEAD_ZONE_KEY)
 
-    def get_auto_choice(self):
+    def get_auto_chooser(self) -> SendableChooser:
         """
         Return the autonomous mode choice selected on the smart dashboard
 
         TODO Challenges with _robot reference being `None` in `RobotController`
         """
-        return self.auto_chooser().getSelected()
+        return self.auto_chooser()
 
     def get_position(self) -> int:
         """
