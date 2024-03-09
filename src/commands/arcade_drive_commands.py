@@ -1,12 +1,12 @@
 import math
 
-from commands2 import Command, Subsystem, CommandBase
+from commands2 import Command, Subsystem
 
 from subsystems.drivetrain import Drivetrain
 from util.stopwatch import Stopwatch
 
 
-class DriveTime(CommandBase):
+class DriveTime(Command):
 
     def __init__(
             self,
@@ -68,7 +68,7 @@ class DriveTime(CommandBase):
         return self._speed
 
 
-class TurnDegrees(CommandBase):
+class TurnDegrees(Command):
 
     def __init__(
             self,
@@ -136,7 +136,7 @@ class TurnDegrees(CommandBase):
         return self._target_degrees
 
 
-class TurnDegreesAbsolute(CommandBase):
+class TurnDegreesAbsolute(Command):
 
     def __init__(
             self,
@@ -203,7 +203,7 @@ class TurnDegreesAbsolute(CommandBase):
         return self._degree_threshold
 
 
-class TurnTime(CommandBase):
+class TurnTime(Command):
 
     def __init__(
             self,
