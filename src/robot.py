@@ -5,6 +5,7 @@ from commands2 import CommandScheduler, SequentialCommandGroup
 from commands2 import TimedCommandRobot
 
 from autonomous.autonomous_drive_commands import MoveFromLine
+from commands.do_nothing import DoNothing
 from robot_controller import RobotController
 
 logging.basicConfig(level=logging.INFO)
@@ -21,8 +22,7 @@ class RetrojaysRobot(TimedCommandRobot):
         # Schedule the autonomous command
         # TODO move into robot controller for better mgmt?
         # self._autonomous_command_group = self._robot_controller.get_auto_chooser().getSelected()
-        self._autonomous_command_group = MoveFromLine(self._robot_controller.drivetrain,
-                                                      self._robot_controller.autonomous_config)
+        self._autonomous_command_group = None
         logging.info(f"Chosen Auto Mode: {self._autonomous_command_group}")
         if self._autonomous_command_group:
             self._autonomous_command_group.schedule()
