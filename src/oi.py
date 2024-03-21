@@ -128,3 +128,9 @@ class OI(Subsystem):
     @property
     def driver_controller(self) -> CommandXboxController:
         return self._driver_controller
+
+    def scontrol_right_y(self) -> float:
+        speed = self._scoring_controller.getRightY()
+        if abs(speed) < 0.15:
+            speed = 0.0
+        return speed

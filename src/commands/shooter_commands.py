@@ -52,7 +52,7 @@ class ShooterDrive(Command):
 
     def execute(self):
         """Called repeatedly when this Command is scheduled to run"""
-        speed = self._oi.scoring_controller.getRightY()
+        speed = self._oi.scontrol_right_y()
         self._shooter.move(speed)
 
     def end(self, interrupted: bool):
