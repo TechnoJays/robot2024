@@ -108,8 +108,8 @@ class RobotController:
         self.vacuum.setDefaultCommand(DoNothingVacuum(self.vacuum, self.oi))
         # set up the default climber command to do nothing
         self.climber.setDefaultCommand(DoNothingClimber(self.climber, self.oi))
-        # set up the default shooter command to do nothing
-        self.shooter.setDefaultCommand(DoNothingShooter(self.shooter))
+        # set up the default shooter command to be shooter
+        self.shooter.setDefaultCommand(ShooterDrive(self.shooter, self.oi))
 
         self.oi.driver_controller.rightBumper().onTrue(GoTurbo(self.drivetrain))
         self.oi.driver_controller.rightBumper().onFalse(ReleaseTurbo(self.drivetrain))
@@ -126,7 +126,6 @@ class RobotController:
 
         self.oi.scoring_controller.y().whileTrue(RaiseShooter(self.shooter, self.oi))
         self.oi.scoring_controller.a().whileTrue(LowerShooter(self.shooter, self.oi))
-        self.oi.scoring_controller.rightStick().whileTrue(ShooterDrive(self.shooter, self.oi))
 
         self.oi.scoring_controller.leftStick().whileTrue(ClimberDrive(self.climber, self.oi))
         self.oi.scoring_controller.x().whileTrue(Climb(self.climber, self.oi, 0.5))
