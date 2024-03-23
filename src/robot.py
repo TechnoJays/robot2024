@@ -20,9 +20,7 @@ class RetrojaysRobot(TimedCommandRobot):
     def autonomousInit(self):
         # Schedule the autonomous command
         # TODO move into robot controller for better mgmt?
-        # self._autonomous_command_group = self._robot_controller.get_auto_chooser().getSelected()
-        self._autonomous_command_group = MoveFromLine(self._robot_controller.drivetrain,
-                                                      self._robot_controller.autonomous_config)
+        self._autonomous_command_group = self._robot_controller.get_auto_chooser().getSelected()
         logging.info(f"Chosen Auto Mode: {self._autonomous_command_group}")
         if self._autonomous_command_group:
             self._autonomous_command_group.schedule()

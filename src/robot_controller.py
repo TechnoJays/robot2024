@@ -137,9 +137,9 @@ class RobotController:
 
     def _setup_autonomous_smartdashboard(self) -> SendableChooser:
         auto_chooser = self._oi.get_auto_chooser()
-        auto_chooser.setDefaultOption("Do_Nothing", DoNothing(self._drivetrain))
-        auto_chooser.addOption("Move_From_Line",
+        auto_chooser.setDefaultOption("Move_From_Line",
                                MoveFromLine(self._drivetrain, self._autonomous_config))
+        auto_chooser.addOption("Do_Nothing", DoNothing(self._drivetrain))
         SmartDashboard.putData(auto_chooser)
         return auto_chooser
 
