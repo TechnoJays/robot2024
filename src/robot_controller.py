@@ -8,7 +8,7 @@ from configparser import ConfigParser
 from commands2 import Subsystem, SequentialCommandGroup
 from wpilib import SmartDashboard, SendableChooser
 
-from autonomous.autonomous_drive_commands import MoveFromLine
+from autonomous.autonomous_drive_commands import MoveFromLine, DelayedMoveFromLine
 from commands.climber_commands import Climb, ClimberDrive, DoNothingClimber
 from commands.do_nothing import DoNothing
 from commands.shooter_commands import DoNothingShooter, RaiseShooter, LowerShooter, ShooterDrive
@@ -136,8 +136,9 @@ class RobotController:
 
     def _setup_autonomous_smartdashboard(self) -> SendableChooser:
         auto_chooser = self._oi.get_auto_chooser()
-        auto_chooser.setDefaultOption("Move_From_Line",
-                               MoveFromLine(self._drivetrain, self._autonomous_config))
+        auto_chooser.setDefaultOption("Move_From_Line", MoveFromLine(self._drivetrain, self._autonomous_config))
+        auto_chooser.setDefaultOption("DELAYED_Mobility",
+                                      DelayedMoveFromLine(self._drivetrain, self._autonomous_config))
         auto_chooser.addOption("Do_Nothing", DoNothing(self._drivetrain))
         SmartDashboard.putData(auto_chooser)
         return auto_chooser
